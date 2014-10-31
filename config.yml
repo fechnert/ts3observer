@@ -1,0 +1,46 @@
+################################################################################
+# Some global configuration
+################################################################################
+global:
+
+  server:
+    host: localhost
+    port: 10011
+    name: query_username
+    pass: query_password
+
+################################################################################
+# Feature specific configuration
+################################################################################
+features:
+
+  username-blacklist:
+    # Kick clients with unwanted names
+    enable: True
+    channel-whitelist: []
+    channel-blacklist: []
+    client-whitelist: []
+    client-blacklist: []
+
+    name-blacklist:
+      # Blacklisted usernames as RegEx
+      - "(.*)n[i!1](g+)er(.*)"
+      - "(.*)n[a@]z[i!1](.*)"
+
+  automoving:
+    # Move clients on specific events
+    enable: True
+    channel-whitelist: []
+    channel-blacklist: []
+    client-whitelist: []
+    client-blacklist: []
+
+  musicbot-detect:
+    # Detect musicbots (by continuous transmission)
+    enable: True
+    channel-whitelist: []
+    channel-blacklist: []
+    client-whitelist: []
+    client-blacklist: []
+
+    detect-after: 5
