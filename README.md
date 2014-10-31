@@ -9,9 +9,9 @@ It allows to observe specific servers and manage clients and channels.
 Features
 --------
 
-* (#4) Move clients to specific channel on event
-* (#1) Kick clients by name blacklist
-* (#5) Detect musicbots and demote them
+* Move clients to specific channel on event
+* Kick clients by name blacklist
+* Detect musicbots and demote them
 
 
 Usage
