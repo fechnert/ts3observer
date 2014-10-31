@@ -1,0 +1,6 @@
+# Eclipse stuff
+.project
+.pydevproject
+
+# Python stuff
+*.pyc
