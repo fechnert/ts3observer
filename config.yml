@@ -4,6 +4,7 @@
 global:
 
   server:
+    # telnet connection
     host: localhost
     port: 10011
     name: query_username
