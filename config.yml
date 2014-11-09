@@ -15,33 +15,36 @@ global:
 ################################################################################
 features:
 
-  username-blacklist:
-    # Kick clients with unwanted names
+  # Kick clients with unwanted names
+  UsernameBlacklist:
     enable: True
     channel-whitelist: []
     channel-blacklist: []
     client-whitelist: []
     client-blacklist: []
 
-    name-blacklist:
+    name_blacklist:
       # Blacklisted usernames as RegEx
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
 
-  automoving:
-    # Move clients on specific events
-    enable: True
-    channel-whitelist: []
-    channel-blacklist: []
-    client-whitelist: []
-    client-blacklist: []
 
-  musicbot-detect:
-    # Detect musicbots (by continuous transmission)
+  # Move clients on specific events
+  AutoMove:
     enable: True
-    channel-whitelist: []
-    channel-blacklist: []
-    client-whitelist: []
-    client-blacklist: []
+    channel_whitelist: []
+    channel_blacklist: []
+    client_whitelist: []
+    client_blacklist: []
 
-    detect-after: 5
+
+  # Detect musicbots (by continuous transmission)
+  MusicbotDetect:
+    enable: True
+    channel_whitelist: []
+    channel_blacklist: []
+    client_whitelist: []
+    client_blacklist: []
+
+    # Delay in runticks
+    detect_after: 5
