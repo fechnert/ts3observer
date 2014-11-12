@@ -48,3 +48,21 @@ class Supervisor(object):
                 feature: getattr(features, feature)(self.config['features'][feature])
             })
         return feature_objects
+
+
+class Client(object):
+    ''' Represents the client '''
+
+    def __init__(self, **kwargs):
+        ''' Fill the object dynamically with client attributes got from telnet '''
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Channel(object):
+    ''' Represents the Channel '''
+
+    def __init__(self, **kwargs):
+        ''' Fill the object dynamically with channel attributes got from telnet '''
+        for key, value in kwargs.items():
+            setattr(self, key, value)
