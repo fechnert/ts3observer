@@ -5,7 +5,9 @@ Created on Nov 9, 2014
 '''
 
 import yaml
+import time
 import logging
+import telnetlib
 import features
 
 
@@ -24,8 +26,22 @@ class Supervisor(object):
     def __init__(self):
         ''' Initialize the Config '''
         self.config = Configuration('config.yml')
+        self._connect()
+
+    def _connect(self):
+        ''' Connect to the telnet server from ts3 '''
+        conf = self.config['global']['telnet']
+        self.tn = telnetlib.Telnet(conf['host'], conf['port'])
+        self.query('login {} {}'.format(conf['user'], conf['pass']))
+        self.query('use {}'.format(conf['serv']))
 
     def execute(self):
+        self._call_features()
+        clients = self._clientlist()
+        print clients
+
+    def _call_features(self):
+        ''' Call every signed feature '''
         for feature in self._import_features().values():
             try:
                 feature.run()
@@ -48,6 +64,38 @@ class Supervisor(object):
                 feature: getattr(features, feature)(self.config['features'][feature])
             })
         return feature_objects
+
+    def _clientlist(self):
+        ''' collect all connected clients '''
+        raw_clients = self.query('clientlist').split('|')
+        clients = {}
+        for raw_client in raw_clients:
+            clients.update(self.__build_clients(raw_client))
+        return clients
+
+    def __build_clients(self, raw_client):
+        ''' build a client from "clientlist" command '''
+        clid = int(self._validate_info(raw_client.split('\r')[0])['clid'])
+        raw_client_data = self.query('clientinfo clid={}'.format(clid))
+        client_data = self._validate_info(raw_client_data)
+        return {clid: Client(**client_data)}
+
+    def _validate_info(self, arg_str):
+        ''' Validate a propertylist got from a telnet query '''
+        properties = arg_str.split(' ')
+
+        validated_properties = {}
+        for key in properties:
+            if '=' in key:
+                x = key.split('=')
+                validated_properties.update({x[0]: x[1]})
+        return validated_properties
+
+    def query(self, command):
+        ''' Executes the telnet server queries '''
+        self.tn.write('{}\n'.format(command))
+        time.sleep(0.1)
+        return self.tn.read_very_eager()
 
 
 class Client(object):

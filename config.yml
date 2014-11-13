@@ -3,12 +3,13 @@
 ################################################################################
 global:
 
-  server:
-    # telnet connection
+  # telnet connection info
+  telnet:
     host: localhost
     port: 10011
-    name: query_username
+    user: query_username
     pass: query_password
+    serv: 1
 
 ################################################################################
 # Feature specific configuration
