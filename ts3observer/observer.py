@@ -36,13 +36,15 @@ class Supervisor(object):
         self.query('use {}'.format(conf['serv']))
 
     def execute(self):
-        self._call_features()
         clients = self._clientlist()
+        channels = None
+        self._call_features(clients, channels)
+
         print clients
 
-    def _call_features(self):
+    def _call_features(self, clients, channels):
         ''' Call every signed feature '''
-        for feature in self._import_features().values():
+        for feature in self._import_features(clients, channels).values():
             try:
                 feature.run()
             except NotImplementedError:
@@ -56,12 +58,12 @@ class Supervisor(object):
                 features.append(feature)
         return features
 
-    def _import_features(self):
+    def _import_features(self, clients, channels):
         ''' Import only the needed features '''
         feature_objects = {}
         for feature in self._get_enabled_features():
             feature_objects.update({
-                feature: getattr(features, feature)(self.config['features'][feature])
+                feature: getattr(features, feature)(self.config['features'][feature], clients, channels)
             })
         return feature_objects
 
