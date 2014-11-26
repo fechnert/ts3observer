@@ -22,13 +22,17 @@ global:
 ################################################################################
 features:
 
+  Base:
+    channel_whitelist: []
+    channel_blacklist: []
+    group_whitelist: []
+    group_blacklist: []
+    client_whitelist: []
+    client_blacklist: []
+
+
   UsernameBlacklist:
     enable: True
-    channel-whitelist: []
-    channel-blacklist: []
-    client-whitelist: []
-    client-blacklist: []
-
     name_blacklist:
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
@@ -36,18 +40,9 @@ features:
 
   IdleManagement:
     enable: True
-    channel_whitelist: []
-    channel_blacklist: []
-    client_whitelist: []
-    client_blacklist: []
-
     on_idle:
       delay: 15
 
 
   MusicbotDetect:
     enable: True
-    channel_whitelist: []
-    channel_blacklist: []
-    client_whitelist: []
-    client_blacklist: []
