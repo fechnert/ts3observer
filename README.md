@@ -5,13 +5,7 @@ ts3-observer is a Feature based serverbot for [TeamSpeak3] servers.
 
 It allows to observe specific servers and manage clients and channels.
 
-
-Features
---------
-
-* Move clients to specific channel on event
-* Kick clients by name blacklist
-* Detect musicbots and demote them
+__Hey__, please read the [wiki] for a complete description of this tool
 
 
 Requirements
@@ -40,4 +34,5 @@ After that, you can run the mainfile to run the server.
 
 
 [TeamSpeak3]:http://www.teamspeak.com/?page=teamspeak3
+[wiki]:https://github.com/HWDexperte/ts3observer/wiki
 [pyaml]:https://pypi.python.org/pypi/pyaml

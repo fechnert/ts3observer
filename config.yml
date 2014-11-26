@@ -1,9 +1,15 @@
 ################################################################################
+#
+#  Aloha fellow user,
+#  please read the documentation about the configuration of this tool to ensure
+#  that you understand what's happening here on this site:
+#
+#  https://github.com/HWDexperte/ts3observer/wiki/Configuration
+#
+################################################################################
 # Some global configuration
 ################################################################################
 global:
-
-  # telnet connection info
   telnet:
     host: localhost
     port: 10011
@@ -16,7 +22,6 @@ global:
 ################################################################################
 features:
 
-  # Kick clients with unwanted names
   UsernameBlacklist:
     enable: True
     channel-whitelist: []
@@ -25,27 +30,24 @@ features:
     client-blacklist: []
 
     name_blacklist:
-      # Blacklisted usernames as RegEx
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
 
 
-  # Move clients on specific events
-  AutoMove:
+  IdleManagement:
     enable: True
     channel_whitelist: []
     channel_blacklist: []
     client_whitelist: []
     client_blacklist: []
 
+    on_idle:
+      delay: 15
 
-  # Detect musicbots (by continuous transmission)
+
   MusicbotDetect:
     enable: True
     channel_whitelist: []
     channel_blacklist: []
     client_whitelist: []
     client_blacklist: []
-
-    # Delay in runticks
-    detect_after: 5
