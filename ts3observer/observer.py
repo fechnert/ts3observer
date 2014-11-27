@@ -114,8 +114,13 @@ class Supervisor(object):
     def query(self, command):
         ''' Executes the telnet server queries '''
         self.tn.write('{}\n'.format(command))
-        time.sleep(0.1)
-        return self.tn.read_very_eager()
+        return self._trim(self.tn.read_until('msg=ok'))
+
+    def _trim(self, string):
+        ''' trim a string and remove new lines '''
+        string = string.replace('\n', ' ')
+        string = string.replace('\r', ' ')
+        return string
 
 
 class Client(object):
