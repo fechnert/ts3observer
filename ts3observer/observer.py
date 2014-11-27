@@ -6,7 +6,6 @@ Created on Nov 9, 2014
 
 import os, shutil
 import yaml
-import time
 import logging
 import telnetlib
 import features
@@ -131,6 +130,9 @@ class Client(object):
         ''' Fill the object dynamically with client attributes got from telnet '''
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def __repr__(self):
+        return '<Client object ({})>'.format(self.client_nickname)
 
 
 class Channel(object):
