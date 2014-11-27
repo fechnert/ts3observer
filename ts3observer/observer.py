@@ -62,14 +62,6 @@ class Supervisor(object):
             except NotImplementedError:
                 logging.warn('Can\'t run Feature \'{}\''.format(feature.__class__.__name__))
 
-    def _get_enabled_features(self):
-        ''' Get all features which are enabled in config '''
-        features = []
-        for feature in self.config['features']:
-            if self.config['features'][feature]['enable']:
-                features.append(feature)
-        return features
-
     def _import_features(self, clients, channels):
         ''' Import only the needed features '''
         feature_objects = {}
@@ -79,15 +71,24 @@ class Supervisor(object):
             })
         return feature_objects
 
+    def _get_enabled_features(self):
+        ''' Get all features which are enabled in config '''
+        features = []
+        for feature in self.config['features']:
+            if feature != 'Base':
+                if self.config['features'][feature]['enable']:
+                    features.append(feature)
+        return features
+
     def _clientlist(self):
         ''' collect all connected clients '''
         raw_clients = self.query('clientlist').split('|')
         clients = {}
         for raw_client in raw_clients:
-            clients.update(self.__build_clients(raw_client))
+            clients.update(self.__build_client(raw_client))
         return clients
 
-    def __build_clients(self, raw_client):
+    def __build_client(self, raw_client):
         ''' build a client from "clientlist" command '''
         clid = int(self._validate_info(raw_client.split('\r')[0])['clid'])
         raw_client_data = self.query('clientinfo clid={}'.format(clid))
