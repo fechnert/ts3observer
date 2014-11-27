@@ -23,10 +23,14 @@ class Feature(object):
 class UsernameBlacklist(Feature):
     pass
 
-
-class AutoMove(Feature):
+class OnAway(Feature):
     pass
 
+class OnIdle(Feature):
+    pass
 
-class MusicbotDetect(Feature):
+class OnMute(Feature):
+    pass
+
+class OnDeaf(Feature):
     pass
