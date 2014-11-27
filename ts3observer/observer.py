@@ -67,7 +67,12 @@ class Supervisor(object):
         feature_objects = {}
         for feature in self._get_enabled_features():
             feature_objects.update({
-                feature: getattr(features, feature)(self.config['features'][feature], clients, channels)
+                feature: getattr(features, feature)(
+                    self.config['features'][feature],
+                    self.config['features']['Base']['rules'],
+                    clients,
+                    channels
+                    )
             })
         return feature_objects
 

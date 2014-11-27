@@ -26,12 +26,13 @@ global:
 features:
 
   Base:
-    channel_whitelist: []
-    channel_blacklist: []
-    group_whitelist: []
-    group_blacklist: []
-    client_whitelist: []
-    client_blacklist: []
+    rules:
+      channel_whitelist: [5, 6]
+      channel_blacklist: []
+      group_whitelist: []
+      group_blacklist: []
+      client_whitelist: []
+      client_blacklist: []
 
 #####
 # Miscellaneous Features
