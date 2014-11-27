@@ -19,6 +19,9 @@ global:
 
 ################################################################################
 # Feature specific configuration
+#
+# Please read here for the complete documentation of configure features:
+# https://github.com/HWDexperte/ts3observer/wiki/Features
 ################################################################################
 features:
 
@@ -30,19 +33,49 @@ features:
     client_whitelist: []
     client_blacklist: []
 
+#####
+# Miscellaneous Features
 
   UsernameBlacklist:
     enable: True
     name_blacklist:
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
+    execute:
+      delay: 0
+      action: kick
+      from: server
 
+#####
+# Features to handle ways of idling
 
-  IdleManagement:
+  OnAway:
     enable: True
-    on_idle:
-      delay: 15
+    execute:
+      s_delay: 15
+      action: move
+      to: 4
+      move_back: True
 
-
-  MusicbotDetect:
+  OnIdle:
     enable: True
+    execute:
+      m_delay: 15
+      action: kick
+      from: server
+
+  OnMute:
+    enable: True
+    execute:
+      s_delay: 15
+      action: move
+      to: 4
+      move_back: False
+
+  OnDeaf:
+    enable: True
+    execute:
+      s_delay: 15
+      action: move
+      to: 4
+      move_back: True
