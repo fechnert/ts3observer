@@ -1,7 +1,7 @@
 ts3observer
 ============
 
-ts3-observer is a Feature based serverbot for [TeamSpeak3] servers.
+__ts3observer__ is a Feature based serverbot for [TeamSpeak3] servers.
 
 It allows to observe specific servers and manage clients and channels.
 
