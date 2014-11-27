@@ -15,12 +15,19 @@ class CommandLineInterface(object):
 
     def __init__(self):
         ''' Initialize the Config '''
-        logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='[%(levelname)5s] %(message)s')
+        logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='[%(levelname)s] %(message)s')
         self.supervisor = Supervisor()
 
     def run(self):
         ''' Do some stuff '''
-        start = time.time()
-        self.supervisor.execute()
-        end = time.time()
-        print('\033[33mTime needed: \033[32m{} \033[33m seconds\033[0m'.format(end - start))
+        while True:
+            start = time.time()
+            self.supervisor.execute()
+            end = time.time()
+
+            time_needed = end - start
+            if time_needed >= self.supervisor.work_interval:
+                logging.warn('More time needed than configured! ({} > {})'.format(time_needed, self.supervisor.work_interval))
+            else:
+                logging.info('Sleeping {} seconds ...'.format(self.supervisor.work_interval - time_needed))
+                time.sleep(self.supervisor.work_interval - time_needed)

@@ -38,6 +38,7 @@ class Supervisor(object):
     def __init__(self):
         ''' Initialize the Config '''
         self.config = Configuration('config.yml')
+        self.work_interval = self.config['global']['work_interval']
         self._connect()
 
     def _connect(self):

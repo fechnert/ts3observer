@@ -10,6 +10,7 @@
 # Some global configuration
 ################################################################################
 global:
+  work_interval: 1
   telnet:
     host: localhost
     port: 10011
