@@ -4,6 +4,7 @@ Created on Nov 9, 2014
 @author: fechnert
 '''
 
+import os, shutil
 import yaml
 import time
 import logging
@@ -16,8 +17,19 @@ class Configuration(dict):
 
     def __init__(self, path):
         ''' Initialize the file '''
+        self._check_local_conf()
         with open(path, 'r') as f:
             self.update(yaml.load(f))
+
+    def _check_local_conf(self):
+        ''' Check if a local config file is existing '''
+        if not os.path.exists('config.yml'):
+            self._create_local_conf()
+
+    def _create_local_conf(self):
+        ''' Create a local config out of the example '''
+        logging.warn('local \'config.yml\' not found! But i\'ve created one for you ;)')
+        shutil.copy2('example.config.yml', 'config.yml')
 
 
 class Supervisor(object):

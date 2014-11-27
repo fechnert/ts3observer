@@ -4,3 +4,6 @@
 
 # Python stuff
 *.pyc
+
+# The local config
+config.yml
