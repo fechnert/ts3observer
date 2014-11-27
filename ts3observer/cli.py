@@ -5,6 +5,7 @@ Created on Nov 9, 2014
 '''
 
 import sys
+import time
 import logging
 from ts3observer.observer import Supervisor
 
@@ -19,4 +20,7 @@ class CommandLineInterface(object):
 
     def run(self):
         ''' Do some stuff '''
+        start = time.time()
         self.supervisor.execute()
+        end = time.time()
+        print('\033[33mTime needed: \033[32m{} \033[33m seconds\033[0m'.format(end - start))
