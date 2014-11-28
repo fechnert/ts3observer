@@ -5,7 +5,7 @@ Created on Nov 10, 2014
 '''
 
 import logging
-
+import copy
 
 class Feature(object):
     ''' Represents a abstract Feature '''
@@ -13,7 +13,7 @@ class Feature(object):
     def __init__(self, config, base_rules, clients, channels):
         ''' Initialize the Object, set rules, apply rules '''
         self.config = config
-        self.clients = clients
+        self.clients = copy.copy(clients)
         self.channels = channels
         self._set_rules(base_rules)
         self._overwrite_rules(config)
