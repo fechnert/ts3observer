@@ -9,6 +9,7 @@ import yaml
 import logging
 import telnetlib
 import features
+from models import Client, Channel
 
 
 class Configuration(dict):
@@ -123,46 +124,3 @@ class Supervisor(object):
         string = string.replace('\n', ' ')
         string = string.replace('\r', ' ')
         return string
-
-
-class Client(object):
-    ''' Represents the client '''
-
-    def __init__(self, clid, socket, **kwargs):
-        ''' Fill the object dynamically with client attributes got from telnet '''
-        self.clid = clid
-        self.socket = socket
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    def __repr__(self):
-        return '<Client object ({}: {})>'.format(self.clid, self.client_nickname)
-
-    def kick(self, reasonid, reasonmsg='ByeBye'):
-        ''' Kick a client '''
-        self.socket.write('clientkick reasonid={} reasonmsg={} clid={}\n'.format(reasonid, reasonmsg, self.clid))
-        self.socket.read_until('msg=ok', 2)
-
-    def move(self, to):
-        ''' Move a client :to: a channel '''
-        raise NotImplementedError
-
-    def ban(self, sfor):
-        ''' Ban a client for :sfor: seconds '''
-        raise NotImplementedError
-
-
-class Channel(object):
-    ''' Represents the Channel '''
-
-    def __init__(self, socket, **kwargs):
-        ''' Fill the object dynamically with channel attributes got from telnet '''
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    def __repr__(self):
-        return '<Channel object ({})>'.format(self.channel_name)
-
-    def delete(self):
-        ''' Delete a channel '''
-        raise NotImplementedError
