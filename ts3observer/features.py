@@ -64,6 +64,18 @@ class Feature(object):
     def run(self):
         raise NotImplementedError
 
+    def treat_client(self, client_obj):
+        ''' execute configured action to client '''
+        getattr(client_obj, self.config['execute']['action'])(
+            self.__class__.__name__, **self.config['execute']
+        )
+
+
+class Test(Feature):
+    ''' TESTCLASS: execute a configured action on all available clients '''
+    def run(self):
+        for clid, client in self.clients.items():
+            self.treat_client(client)
 
 class UsernameBlacklist(Feature):
     pass

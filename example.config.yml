@@ -44,12 +44,19 @@ features:
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
     execute:
-      delay: 0
+      s_delay: 15
       action: kick
       from: server
 
 #####
 # Features to handle ways of idling
+
+  Test:
+    enable: False
+    execute:
+      action: kick
+      reasonid: 5
+      reason: "Kicked by Aliens!"
 
   OnAway:
     enable: True
@@ -62,7 +69,7 @@ features:
   OnIdle:
     enable: True
     execute:
-      m_delay: 15
+      s_delay: 15
       action: kick
       from: server
 

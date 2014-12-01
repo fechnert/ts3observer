@@ -4,6 +4,10 @@ Created on Dec 1, 2014
 @author: fechnert
 '''
 
+import logging
+from helpers import Escaper
+
+
 class Client(object):
     ''' Represents the client '''
 
@@ -17,23 +21,30 @@ class Client(object):
     def __repr__(self):
         return '<Client object ({}: {})>'.format(self.clid, self.client_nickname)
 
-    def kick(self, reasonid, reason='ByeBye'):
+    @Escaper.encode_attr('reason')
+    def kick(self, featurename, reasonid, reason='ByeBye', **kwargs):
         ''' Kick a client '''
         self.socket.write('clientkick reasonid={} reasonmsg={} clid={}\n'.format(reasonid, reason, self.clid))
         self.socket.read_until('msg=ok', 2)
+        logging.info('Feature \'{}\' kicked {}'.format(featurename, self.client_nickname))
 
-    def move(self, to):
+    def move(self, featurename, to, **kwargs):
         ''' Move a client :to: a channel '''
-        self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
-        self.socket.read_until('msg=ok', 2)
+        if int(self.cid) != to:
+            ocid = self.cid
+            self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
+            self.socket.read_until('msg=ok', 2)
+            logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, self.client_nickname, ocid, to))
 
-    def ban(self, time=0, reason='Kicked'):
+    @Escaper.encode_attr('reason')
+    def ban(self, featurename, time=0, reason='Kicked', **kwargs):
         ''' Ban a client for :sfor: seconds '''
         if time:
             self.socket.write('banclient clid={} banreason={} time={}\n'.format(self.clid, reason, time))
         else:
             self.socket.write('banclient clid={} banreason={}\n'.format(self.clid, reason))
         self.socket.read_until('msg=ok', 2)
+        logging.info('Feature \'{}\' banned {} for {} seconds (0 = infinite)'.format(featurename, self.client_nickname, time))
 
 
 class Channel(object):
