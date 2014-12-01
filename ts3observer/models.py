@@ -25,6 +25,7 @@ class Client(object):
     def move(self, to):
         ''' Move a client :to: a channel '''
         self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
+        self.socket.read_until('msg=ok', 2)
 
     def ban(self, time=0, reason='Kicked'):
         ''' Ban a client for :sfor: seconds '''
