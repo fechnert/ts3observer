@@ -7,6 +7,7 @@ Created on Nov 10, 2014
 import logging
 import copy
 
+
 class Feature(object):
     ''' Represents a abstract Feature '''
 
