@@ -19,7 +19,7 @@ class Client(object):
             setattr(self, key, value)
 
     def __repr__(self):
-        return '<Client object ({}: {})>'.format(self.clid, self.client_nickname)
+        return '<Client [{}]>'.format(Escaper.decode(self.client_nickname))
 
     @Escaper.encode_attr('reason')
     def kick(self, featurename, reasonid, reason='ByeBye', **kwargs):
