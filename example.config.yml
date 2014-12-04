@@ -61,30 +61,27 @@ features:
   OnAway:
     enable: False
     execute:
-      s_delay: 15
-      action: move
-      to: 4
-      move_back: True
+      action: kick
+      reasonid: 5
+      reason: "Away for too long!"
 
   OnIdle:
     enable: False
     execute:
-      s_delay: 15
       action: kick
-      from: server
+      reasonid: 5
+      reason: "Idled too long!"
 
   OnMute:
     enable: False
     execute:
-      s_delay: 15
-      action: move
-      to: 4
-      move_back: False
+      action: kick
+      reasonid: 5
+      reason: "Muted too long!"
 
   OnDeaf:
     enable: False
     execute:
-      s_delay: 15
-      action: move
-      to: 4
-      move_back: True
+      action: kick
+      reasonid: 5
+      reason: "Deaf too long!"
