@@ -28,7 +28,7 @@ features:
 
   Base:
     rules:
-      channel_whitelist: [5, 6]
+      channel_whitelist: []
       channel_blacklist: []
       group_whitelist: []
       group_blacklist: []
@@ -59,7 +59,7 @@ features:
       reason: "Kicked by Aliens!"
 
   OnAway:
-    enable: True
+    enable: False
     execute:
       s_delay: 15
       action: move
@@ -67,14 +67,14 @@ features:
       move_back: True
 
   OnIdle:
-    enable: True
+    enable: False
     execute:
       s_delay: 15
       action: kick
       from: server
 
   OnMute:
-    enable: True
+    enable: False
     execute:
       s_delay: 15
       action: move
@@ -82,7 +82,7 @@ features:
       move_back: False
 
   OnDeaf:
-    enable: True
+    enable: False
     execute:
       s_delay: 15
       action: move
