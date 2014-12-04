@@ -6,6 +6,7 @@ Created on Nov 10, 2014
 
 import logging
 import copy
+import re
 
 
 class Feature(object):
@@ -78,7 +79,11 @@ class Test(Feature):
             self.treat_client(client)
 
 class UsernameBlacklist(Feature):
-    pass
+    def run(self):
+        for clid, client in self.clients.items():
+            for regex in self.config['name_blacklist']:
+                if re.match(regex, client.client_nickname):
+                    self.treat_client(client)
 
 class OnAway(Feature):
     pass

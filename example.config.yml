@@ -44,9 +44,9 @@ features:
       - "(.*)n[i!1](g+)er(.*)"
       - "(.*)n[a@]z[i!1](.*)"
     execute:
-      s_delay: 15
       action: kick
-      from: server
+      reasonid: 5
+      reason: "Bad username!"
 
 #####
 # Features to handle ways of idling
