@@ -46,6 +46,10 @@ class Client(object):
         self.socket.read_until('msg=ok', 2)
         logging.info('Feature \'{}\' banned {} for {} seconds (0 = infinite)'.format(featurename, self.client_nickname, time))
 
+    def show(self, featurename, **kwargs):
+        ''' Only shows the clientname (for debugging purpose) '''
+        logging.info('{}: {}'.format(featurename, Escaper.decode(self.client_nickname)))
+
 
 class Channel(object):
     ''' Represents the Channel '''
