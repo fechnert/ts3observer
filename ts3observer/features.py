@@ -63,6 +63,19 @@ class Feature(object):
                 self.clients.pop(clid, None)
 
     def run(self):
+        ''' run the logic part on every matched client '''
+        for clid, client in self.clients.items():
+            try:
+                client = self.logic(clid, client)
+            except NotImplementedError:
+                raise NotImplementedError
+            if client:
+                self.treat_client(client)
+
+    def logic(self, clid, client):
+        ''' Define the logic for a single client object.
+            return client object to treat it
+        '''
         raise NotImplementedError
 
     def treat_client(self, client_obj):
@@ -74,16 +87,14 @@ class Feature(object):
 
 class Test(Feature):
     ''' TESTCLASS: execute a configured action on all available clients '''
-    def run(self):
-        for clid, client in self.clients.items():
-            self.treat_client(client)
+    def logic(self, clid, client):
+        return client
 
 class UsernameBlacklist(Feature):
-    def run(self):
-        for clid, client in self.clients.items():
-            for regex in self.config['name_blacklist']:
-                if re.match(regex, client.client_nickname):
-                    self.treat_client(client)
+    def logic(self, clid, client):
+        for regex in self.config['name_blacklist']:
+            if re.match(regex, client.client_nickname):
+                return client
 
 class OnAway(Feature):
     pass
