@@ -66,13 +66,13 @@ class Feature(object):
         ''' run the logic part on every matched client '''
         for clid, client in self.clients.items():
             try:
-                client = self.logic(clid, client)
+                client = self.filter(clid, client)
             except NotImplementedError:
                 raise NotImplementedError
             if client:
                 self.treat_client(client)
 
-    def logic(self, clid, client):
+    def filter(self, clid, client):
         ''' Define the logic for a single client object.
             return client object to treat it
         '''
@@ -87,11 +87,11 @@ class Feature(object):
 
 class Test(Feature):
     ''' TESTCLASS: execute a configured action on all available clients '''
-    def logic(self, clid, client):
+    def filter(self, clid, client):
         return client
 
 class UsernameBlacklist(Feature):
-    def logic(self, clid, client):
+    def filter(self, clid, client):
         for regex in self.config['name_blacklist']:
             if re.match(regex, client.client_nickname):
                 return client

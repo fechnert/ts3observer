@@ -5,7 +5,7 @@ Created on Dec 1, 2014
 '''
 
 import logging
-from helpers import Escaper
+from ts3observer.utils import Escaper
 
 
 class Client(object):
