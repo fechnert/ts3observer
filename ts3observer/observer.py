@@ -97,7 +97,7 @@ class Supervisor(object):
 
     def __build_client(self, raw_client):
         ''' build a client from "clientlist" command '''
-        clid = int(PropertyMapper.string_to_dict(raw_client.split('\r'))['clid'])
+        clid = int(PropertyMapper.string_to_dict(raw_client)['clid'])
         raw_client_data = self.query('clientinfo clid={}'.format(clid))
         client_data = PropertyMapper.string_to_dict(raw_client_data)
         client = Client(clid, self.tn, **client_data)
