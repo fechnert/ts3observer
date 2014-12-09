@@ -5,7 +5,47 @@ Created on Dec 1, 2014
 '''
 
 import logging
-from ts3observer.utils import Escaper
+import time
+from utils import Escaper
+
+
+class ClientAction(object):
+    ''' Represents a action for clients to treat them '''
+
+    def __init__(self, client_obj, feature_name, additional_params):
+        self.client_obj = client_obj
+        self.feature_name = feature_name
+        self.additional_params = additional_params
+        self._set_trigger_time()
+
+    def _set_trigger_time(self):
+        ''' Get the delay of a action and add it to current time as trigger time '''
+        try: s_delay = self.additional_params['s_delay']
+        except KeyError: s_delay = 0
+        try: m_delay = self.additional_params['m_delay']
+        except KeyError: m_delay = 0
+
+        if s_delay and m_delay:
+            logging.warn('{}: s_delay and m_delay set ... ignoring both!'.format(self.feature_name))
+            delay = 0
+        elif m_delay:
+            delay = m_delay * 60
+        else:
+            delay = s_delay
+        self.trigger_time = time.time() + delay
+
+    def execute(self):
+        ''' Execute this action on the client '''
+        getattr(self.client_obj, self.additional_params['action'])(
+            self.feature_name,
+            **self.additional_params
+        )
+
+    def __repr__(self):
+        return '<{actionname}{username}>'.format(
+            actionname=self.additional_params['action'].capitalize(),
+            username=Escaper.decode(self.client_obj.client_nickname).capitalize()
+        )
 
 
 class Client(object):

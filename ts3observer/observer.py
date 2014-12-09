@@ -9,6 +9,7 @@ import yaml
 import logging
 import telnetlib
 import features
+import time
 from utils import Escaper, PropertyMapper
 from models import Client, Channel
 
@@ -39,6 +40,7 @@ class Supervisor(object):
     def __init__(self):
         ''' Initialize the Config '''
         self.config = Configuration('config.yml')
+        self.queue = {}
         self.work_interval = self.config['global']['work_interval']
         self._connect()
 
@@ -53,8 +55,14 @@ class Supervisor(object):
         clients = self._clientlist()
         channels = None
         self._call_features(clients, channels)
+        self.workoff_queue()
 
-        print clients
+    def workoff_queue(self):
+        ''' Work off the queue and execute outstanding actions '''
+        for actionname, action in self.queue.items():
+            if action.trigger_time <= time.time():
+                action.execute()
+                self.queue.pop(actionname)
 
     def _call_features(self, clients, channels):
         ''' Call every signed feature '''
@@ -72,6 +80,7 @@ class Supervisor(object):
                 feature: getattr(features, feature)(
                     self.config['features'][feature],
                     self.config['features']['Base']['rules'],
+                    self.queue,
                     clients,
                     channels
                     )

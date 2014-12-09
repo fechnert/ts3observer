@@ -29,5 +29,5 @@ class CommandLineInterface(object):
             if time_needed >= self.supervisor.work_interval:
                 logging.warn('More time needed than configured! ({} > {})'.format(time_needed, self.supervisor.work_interval))
             else:
-                logging.info('Sleeping {} seconds ...'.format(self.supervisor.work_interval - time_needed))
+                # logging.info('Sleeping {} seconds ...'.format(self.supervisor.work_interval - time_needed))
                 time.sleep(self.supervisor.work_interval - time_needed)

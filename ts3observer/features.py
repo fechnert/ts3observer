@@ -7,14 +7,16 @@ Created on Nov 10, 2014
 import logging
 import copy
 import re
+from models import ClientAction
 
 
 class Feature(object):
     ''' Represents a abstract Feature '''
 
-    def __init__(self, config, base_rules, clients, channels):
+    def __init__(self, config, base_rules, queue, clients, channels):
         ''' Initialize the Object, set rules, apply rules '''
         self.config = config
+        self.queue = queue
         self.clients = copy.copy(clients)
         self.channels = channels
         self._set_rules(base_rules)
@@ -70,7 +72,7 @@ class Feature(object):
             except NotImplementedError:
                 raise NotImplementedError
             if client:
-                self.treat_client(client)
+                self.add_to_queue(client)
 
     def filter(self, clid, client):
         ''' Define the logic for a single client object.
@@ -78,11 +80,15 @@ class Feature(object):
         '''
         raise NotImplementedError
 
-    def treat_client(self, client_obj):
-        ''' execute configured action to client '''
-        getattr(client_obj, self.config['execute']['action'])(
-            self.__class__.__name__, **self.config['execute']
+    def add_to_queue(self, client_obj):
+        ''' Add an action to the queue '''
+        action = ClientAction(
+            client_obj,
+            self.__class__.__name__,
+            self.config['execute']
         )
+        if not str(action) in self.queue:
+            self.queue.update({str(action): action})
 
 
 class Test(Feature):
