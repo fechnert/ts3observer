@@ -9,6 +9,7 @@ import yaml
 import logging
 import telnetlib
 import features
+from utils import Escaper, PropertyMapper
 from models import Client, Channel
 
 
@@ -96,31 +97,14 @@ class Supervisor(object):
 
     def __build_client(self, raw_client):
         ''' build a client from "clientlist" command '''
-        clid = int(self._validate_info(raw_client.split('\r')[0])['clid'])
+        clid = int(PropertyMapper.string_to_dict(raw_client.split('\r'))['clid'])
         raw_client_data = self.query('clientinfo clid={}'.format(clid))
-        client_data = self._validate_info(raw_client_data)
-
+        client_data = PropertyMapper.string_to_dict(raw_client_data)
         client = Client(clid, self.tn, **client_data)
         return {clid: client}
-
-    def _validate_info(self, arg_str):
-        ''' Validate a propertylist got from a telnet query '''
-        properties = arg_str.split(' ')
-
-        validated_properties = {}
-        for key in properties:
-            if '=' in key:
-                x = key.split('=')
-                validated_properties.update({x[0]: x[1]})
-        return validated_properties
 
     def query(self, command):
         ''' Executes the telnet server queries '''
         self.tn.write('{}\n'.format(command))
-        return self._trim(self.tn.read_until('msg=ok', 2))
-
-    def _trim(self, string):
-        ''' trim a string and remove new lines '''
-        string = string.replace('\n', ' ')
-        string = string.replace('\r', ' ')
-        return string
+        result = self.tn.read_until('msg=ok', 2)
+        return Escaper.remove_linebreaks(result)

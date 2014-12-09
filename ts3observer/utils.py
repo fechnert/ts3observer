@@ -57,3 +57,24 @@ class Escaper(object):
                 return fn(*func_args, **func_kwargs)
             return wrapper
         return attr_decoder
+
+    @staticmethod
+    def remove_linebreaks(string):
+        ''' Remove unnecessary linebreaks (\r or \n) '''
+        return string.replace('\n', ' ').replace('\r', ' ')
+
+
+class PropertyMapper(object):
+    ''' Handle stuff like mapping .... '''
+
+    @staticmethod
+    def string_to_dict(arg_str):
+        ''' Map a string to a property dict '''
+        properties = arg_str.split(' ')
+
+        validated_properties = {}
+        for key in properties:
+            if '=' in key:
+                x = key.split('=')
+                validated_properties.update({x[0]: x[1]})
+        return validated_properties
