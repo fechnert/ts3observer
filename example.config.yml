@@ -38,23 +38,25 @@ features:
 #####
 # Miscellaneous Features
 
-  UsernameBlacklist:
-    enable: True
-    name_blacklist:
-      - "(.*)n[i!1](g+)er(.*)"
-      - "(.*)n[a@]z[i!1](.*)"
-    execute:
-      action: show
-
-#####
-# Features to handle ways of idling
-
   Test:
     enable: False
     execute:
       action: kick
       reasonid: 5
       reason: "Kicked by Aliens!"
+
+  UsernameBlacklist:
+    enable: False
+    name_blacklist:
+      - "(.*)n[i!1](g+)er(.*)"
+      - "(.*)n[a@]z[i!1](.*)"
+    execute:
+      action: kick
+      reasonid: 5
+      reason: "Bad username"
+
+#####
+# Features to handle ways of idling
 
   OnAway:
     enable: False
