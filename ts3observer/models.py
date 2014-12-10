@@ -12,11 +12,12 @@ from utils import Escaper
 class ClientAction(object):
     ''' Represents a action for clients to treat them '''
 
-    def __init__(self, client_obj, feature_name, additional_params):
+    def __init__(self, client_obj, featurename, additional_params):
         self.client_obj = client_obj
-        self.feature_name = feature_name
+        self.featurename = featurename
         self.additional_params = additional_params
         self._set_trigger_time()
+        self._set_last_triggered()
 
     def _set_trigger_time(self):
         ''' Get the delay of a action and add it to current time as trigger time '''
@@ -26,7 +27,7 @@ class ClientAction(object):
         except KeyError: m_delay = 0
 
         if s_delay and m_delay:
-            logging.warn('{}: s_delay and m_delay set ... ignoring both!'.format(self.feature_name))
+            logging.warn('{}: s_delay and m_delay set ... ignoring both!'.format(self.featurename))
             delay = 0
         elif m_delay:
             delay = m_delay * 60
@@ -34,15 +35,20 @@ class ClientAction(object):
             delay = s_delay
         self.trigger_time = time.time() + delay
 
+    def _set_last_triggered(self):
+        ''' Sets the current time as last triggered '''
+        self.last_triggered = time.time()
+
     def execute(self):
         ''' Execute this action on the client '''
         getattr(self.client_obj, self.additional_params['action'])(
-            self.feature_name,
+            self.featurename,
             **self.additional_params
         )
 
     def __repr__(self):
-        return '<{actionname}{username}>'.format(
+        return '<{featurename}_{actionname}_{username}>'.format(
+            featurename=self.featurename,
             actionname=self.additional_params['action'].capitalize(),
             username=Escaper.decode(self.client_obj.client_nickname).capitalize()
         )

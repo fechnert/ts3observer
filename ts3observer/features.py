@@ -4,9 +4,9 @@ Created on Nov 10, 2014
 @author: fechnert
 '''
 
-import logging
 import copy
 import re
+import time
 from models import ClientAction
 
 
@@ -89,6 +89,8 @@ class Feature(object):
         )
         if not str(action) in self.queue:
             self.queue.update({str(action): action})
+        else:
+            self.queue[str(action)].last_triggered = time.time()
 
 
 class Test(Feature):

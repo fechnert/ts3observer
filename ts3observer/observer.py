@@ -60,6 +60,8 @@ class Supervisor(object):
     def workoff_queue(self):
         ''' Work off the queue and execute outstanding actions '''
         for actionname, action in self.queue.items():
+            if action.last_triggered <= (time.time() - self.config['global']['work_interval']):
+                self.queue.pop(actionname)
             if action.trigger_time <= time.time():
                 action.execute()
                 self.queue.pop(actionname)
