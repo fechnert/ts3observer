@@ -47,10 +47,10 @@ class ClientAction(object):
         )
 
     def __repr__(self):
-        return '<{featurename}_{actionname}_{username}>'.format(
+        return '<{featurename}_{actionname}_clid={clid}>'.format(
             featurename=self.featurename,
             actionname=self.additional_params['action'].capitalize(),
-            username=Escaper.decode(self.client_obj.client_nickname).capitalize()
+            clid=self.client_obj.clid
         )
 
 

@@ -61,10 +61,12 @@ class Supervisor(object):
         ''' Work off the queue and execute outstanding actions '''
         for actionname, action in self.queue.items():
             if action.last_triggered <= (time.time() - self.config['global']['work_interval']):
-                self.queue.pop(actionname)
+                if actionname in self.queue:
+                    self.queue.pop(actionname)
             if action.trigger_time <= time.time():
                 action.execute()
-                self.queue.pop(actionname)
+                if actionname in self.queue:
+                    self.queue.pop(actionname)
 
     def _call_features(self, clients, channels):
         ''' Call every signed feature '''
