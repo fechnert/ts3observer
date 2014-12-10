@@ -110,7 +110,9 @@ class OnAway(Feature):
             return client
 
 class OnIdle(Feature):
-    pass
+    def filter(self, clid, client):
+        if int(client.client_idle_time) > 1500:
+            return client
 
 class OnMute(Feature):
     def filter(self, clid, client):
