@@ -105,7 +105,9 @@ class UsernameBlacklist(Feature):
                 return client
 
 class OnAway(Feature):
-    pass
+    def filter(self, clid, client):
+        if int(client.client_away) == 1:
+            return client
 
 class OnIdle(Feature):
     pass
