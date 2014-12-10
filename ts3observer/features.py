@@ -113,7 +113,9 @@ class OnIdle(Feature):
     pass
 
 class OnMute(Feature):
-    pass
+    def filter(self, clid, client):
+        if int(client.client_input_muted) == 1:
+            return client
 
 class OnDeaf(Feature):
     pass
