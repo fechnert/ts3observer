@@ -55,6 +55,8 @@ class Supervisor(object):
         clients = self._clientlist()
         channels = None
         self._call_features(clients, channels)
+        logging.debug('\033[33mClients: \033[0m{}'.format(str(clients)))
+        logging.debug('\033[35mQueue  : \033[0m{}'.format(str(self.queue)))
         self.workoff_queue()
 
     def workoff_queue(self):
