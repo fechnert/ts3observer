@@ -52,11 +52,11 @@ class Supervisor(object):
         self.query('use {}'.format(conf['serv']))
 
     def execute(self):
-        clients = self._clientlist()
+        self.clients = self._clientlist()
         channels = None
-        self._call_features(clients, channels)
-        logging.debug('\033[33mClients: \033[0m{}'.format(str(clients)))
-        logging.debug('\033[35mQueue  : \033[0m{}'.format(str(self.queue)))
+        self._call_features(self.clients, channels)
+        logging.debug('Clients: {}'.format(str(self.clients)))
+        logging.debug('Queue  : {}'.format(str(self.queue)))
         self.workoff_queue()
 
     def workoff_queue(self):
