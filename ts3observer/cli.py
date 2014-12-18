@@ -52,7 +52,7 @@ class StdCli(object):
         logging.basicConfig(stream=sys.stdout,
                             level=level,
                             format='[%(asctime)s][%(levelname)s] %(message)s',
-                            datefmt='')
+                            datefmt='%d.%m%.%Y - %H:%M:%S')
         try: self.supervisor = Supervisor()
         except Exception as e:
             if self.args.verbose: print traceback.format_exc()
@@ -77,7 +77,8 @@ class StdCli(object):
         try:
             self.supervisor.execute()
         except Exception as e:
-            logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
+            if self.args.verbose: traceback.format_exc()
+            else: logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
 
 
 class GuiCli(object):
