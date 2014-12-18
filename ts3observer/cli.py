@@ -100,6 +100,7 @@ class GuiCli(object):
             start = time.time()
             self.execute()
             end = time.time()
+
             run_duration = end - start
             self._print_screen(run_duration)
             time.sleep(self.supervisor.work_interval - run_duration)
@@ -172,7 +173,9 @@ class GuiCli(object):
 
     def __get_log(self):
         ''' get log stream and adds it to list '''
-        map(self.log.append, self.stream.getvalue().split('\n'))
+        for entry in self.stream.getvalue().split('\n'):
+            if entry: self.log.append(entry)
+        self.stream.truncate(0)
 
     def _get_queue(self):
         ''' Change the __repr__ of actions and returns them '''
