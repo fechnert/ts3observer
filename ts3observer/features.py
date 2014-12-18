@@ -13,10 +13,11 @@ from models import ClientAction
 class Feature(object):
     ''' Represents a abstract Feature '''
 
-    def __init__(self, config, base_rules, queue, clients, channels):
+    def __init__(self, config, base_rules, queue, mb_queue, clients, channels):
         ''' Initialize the Object, set rules, apply rules '''
         self.config = config
         self.queue = queue
+        self.mb_queue = mb_queue
         self.clients = copy.copy(clients)
         self.channels = channels
         self._set_rules(base_rules)
@@ -70,6 +71,11 @@ class Feature(object):
         if client.client_unique_identifier == 'serveradmin':
             self.clients.pop(clid, None)
 
+    def _check_if_already(self, action):
+        ''' Check if specific action is already executed
+            primary for move action ...
+        '''
+
     def run(self):
         ''' run the logic part on every matched client '''
         for clid, client in self.clients.items():
@@ -93,10 +99,14 @@ class Feature(object):
             self.__class__.__name__,
             self.config['execute']
         )
-        if not str(action) in self.queue:
-            self.queue.update({str(action): action})
+        name = '<{}_moveback_{}>'.format(self.__class__.__name__, client_obj.clid)
+        if int(client_obj.cid) == int(self.config['execute']['to']) and name in self.mb_queue:
+            self.mb_queue[name].trigger_time = time.time() + 2
         else:
-            self.queue[str(action)].last_triggered = time.time()
+            if not str(action) in self.queue:
+                self.queue.update({str(action): action})
+            else:
+                self.queue[str(action)].last_triggered = time.time()
 
 
 class Test(Feature):

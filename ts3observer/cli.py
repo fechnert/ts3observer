@@ -103,7 +103,8 @@ class GuiCli(object):
 
             run_duration = end - start
             self._print_screen(run_duration)
-            time.sleep(self.supervisor.work_interval - run_duration)
+            if (self.supervisor.work_interval - run_duration) > 0:
+                time.sleep(self.supervisor.work_interval - run_duration)
 
     def execute(self):
         ''' Execute the supervisor and catch exceptions '''

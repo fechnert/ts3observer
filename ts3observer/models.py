@@ -41,7 +41,7 @@ class ClientAction(object):
 
     def execute(self):
         ''' Execute this action on the client '''
-        getattr(self.client_obj, self.additional_params['action'])(
+        return getattr(self.client_obj, self.additional_params['action'])(
             self.featurename,
             **self.additional_params
         )
@@ -51,6 +51,22 @@ class ClientAction(object):
             featurename=self.featurename,
             actionname=self.additional_params['action'].capitalize(),
             clid=self.client_obj.clid
+        )
+
+class MoveBackAction(object):
+    ''' This is a helper class to move back clients which have been moved '''
+
+    def __init__(self, clid, to, feature_name, trigger_time):
+        ''' initialize the object '''
+        self.clid = clid
+        self.to = to
+        self.feature_name = feature_name
+        self.trigger_time = trigger_time
+
+    def __repr__(self):
+        return '<{featurename}_moveback_{clid}>'.format(
+            featurename=self.feature_name,
+            clid=self.clid
         )
 
 
@@ -77,10 +93,11 @@ class Client(object):
     def move(self, featurename, to, **kwargs):
         ''' Move a client :to: a channel '''
         if int(self.cid) != to:
-            ocid = self.cid
+            self.ocid = self.cid
+            self.cid = to
             self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
             self.socket.read_until('msg=ok', 2)
-            logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, self.client_nickname, ocid, to))
+            logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, self.client_nickname, self.ocid, to))
 
     @Escaper.encode_attr('reason')
     def ban(self, featurename, time=0, reason='Kicked', **kwargs):
