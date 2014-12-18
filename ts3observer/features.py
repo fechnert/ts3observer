@@ -47,6 +47,7 @@ class Feature(object):
         if self.client_blacklist:
             if client.client_unique_identifier + '=' in self.client_blacklist:
                 self.clients.pop(clid, None)
+        self.__exclude_self(clid, client)
 
     def __apply_group_rules(self, clid, client):
         if self.group_whitelist:
@@ -63,6 +64,11 @@ class Feature(object):
         if self.channel_blacklist:
             if client.cid in self.channel_blacklist:
                 self.clients.pop(clid, None)
+
+    def __exclude_self(self, clid, client):
+        ''' Exclude the serveradmin '''
+        if client.client_unique_identifier == 'serveradmin':
+            self.clients.pop(clid, None)
 
     def run(self):
         ''' run the logic part on every matched client '''

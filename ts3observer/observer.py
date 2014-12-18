@@ -50,6 +50,7 @@ class Supervisor(object):
         self.tn = telnetlib.Telnet(conf['host'], conf['port'])
         self.query('login {} {}'.format(conf['user'], conf['pass']))
         self.query('use {}'.format(conf['serv']))
+        self.query('clientupdate client_nickname=ts3observer')
 
     def execute(self):
         self.clients = self._clientlist()
