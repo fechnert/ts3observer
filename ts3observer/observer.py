@@ -10,7 +10,7 @@ import logging
 import telnetlib
 import features
 import time
-from utils import Escaper, PropertyMapper
+from utils import Escaper, PropertyMapper, Validator
 from models import Client, Channel
 
 
@@ -43,14 +43,26 @@ class Supervisor(object):
         self.queue = {}
         self.work_interval = self.config['global']['work_interval']
         self._connect()
+        self._login()
 
     def _connect(self):
         ''' Connect to the telnet server from ts3 '''
+        logging.info('Connecting ...')
         conf = self.config['global']['telnet']
         self.tn = telnetlib.Telnet(conf['host'], conf['port'])
-        self.query('login {} {}'.format(conf['user'], conf['pass']))
-        self.query('use {}'.format(conf['serv']))
-        self.query('clientupdate client_nickname=ts3observer')
+        time.sleep(1)
+        self.tn.read_very_eager()  # clear cache
+
+    def _login(self):
+        ''' Login as serveradmin and change name '''
+        logging.info('Logging in as {} ...'.format(self.config['global']['telnet']['user']))
+        Validator.query(self.query('login {user} {pass}'.format(**self.config['global']['telnet'])))
+        logging.info('Choosing virtual server {} ...'.format(self.config['global']['telnet']['serv']))
+        Validator.query(self.query('use {serv}'.format(**self.config['global']['telnet'])))
+        logging.info('Changing displayname to {}'.format(self.config['global']['telnet']['display_name']))
+        Validator.query(self.query('clientupdate client_nickname={}'.format(
+            Escaper.encode(format(self.config['global']['telnet']['display_name'])))))
+        logging.info('Successfully cunnected to server!')
 
     def execute(self):
         self.clients = self._clientlist()

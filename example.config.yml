@@ -17,6 +17,7 @@ global:
     user: query_username
     pass: query_password
     serv: 1
+    display_name: "ts3observer"
 
 ################################################################################
 # Feature specific configuration

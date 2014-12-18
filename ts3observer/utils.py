@@ -12,10 +12,10 @@ class Escaper(object):
     '''
 
     escapetable = {
-        r'\\' : '\\',
-        r'\/'    : r'/',
-        r'\s'  : r' ',
-        r'\p'  : r'|'
+        r'\\': '\\',
+        r'\/': r'/',
+        r'\s': r' ',
+        r'\p': r'|'
     }
 
     @classmethod
@@ -78,3 +78,13 @@ class PropertyMapper(object):
                 x = key.split('=')
                 validated_properties.update({x[0]: x[1]})
         return validated_properties
+
+
+class Validator(object):
+    ''' Validate some stuff and raise exception '''
+
+    @staticmethod
+    def query(string):
+        ''' Validate the output of querys '''
+        if not 'msg=ok' in string:
+            raise Exception(Escaper.decode(string))

@@ -8,6 +8,7 @@ import sys, os
 import time
 import logging
 import argparse
+import traceback
 from StringIO import StringIO
 from ts3observer.observer import Supervisor
 
@@ -36,28 +37,32 @@ class CommandLineInterface(object):
     def run(self):
         ''' Do some stuff '''
         if self.args.graphical:
-            self.cli = GuiCli(self._get_loglevel())
+            self.cli = GuiCli(self.args, self._get_loglevel())
         else:
-            self.cli = StdCli(self._get_loglevel())
+            self.cli = StdCli(self.args, self._get_loglevel())
         self.cli.run()
 
 
 class StdCli(object):
     ''' A normal, logging command line interface '''
 
-    def __init__(self, level):
+    def __init__(self, args, level):
         ''' Set logging conf and get supervisor '''
+        self.args = args
         logging.basicConfig(stream=sys.stdout,
                             level=level,
                             format='[%(asctime)s][%(levelname)s] %(message)s',
                             datefmt='')
-        self.supervisor = Supervisor()
+        try: self.supervisor = Supervisor()
+        except Exception as e:
+            if self.args.verbose: print traceback.format_exc()
+            else: logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e))); quit(0)
 
     def run(self):
         ''' Run the ts3observer '''
         while True:
             start = time.time()
-            self.supervisor.execute()
+            self.execute()
             end = time.time()
 
             time_needed = end - start
@@ -67,32 +72,47 @@ class StdCli(object):
                 # logging.info('Sleeping {} seconds ...'.format(self.supervisor.work_interval - time_needed))
                 time.sleep(self.supervisor.work_interval - time_needed)
 
+    def execute(self):
+        ''' Execute the supervisor and catch exceptions '''
+        try:
+            self.supervisor.execute()
+        except Exception as e:
+            logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
+
 
 class GuiCli(object):
     ''' A graphical command line interface (ascii art and stuff) '''
 
-    def __init__(self, level):
+    def __init__(self, args, level):
         ''' Set logging conf and get supervisor '''
+        self.args = args
         self.stream = StringIO()
         logging.basicConfig(stream=self.stream,
                             level=level,
                             format='[%(levelname)s] %(message)s')
         self.supervisor = Supervisor()
+        self.__set_stuff()
 
     def run(self):
         ''' Run the ts3observer '''
         while True:
             start = time.time()
-            self.supervisor.execute()
+            self.execute()
             end = time.time()
             run_duration = end - start
             self._print_screen(run_duration)
             time.sleep(self.supervisor.work_interval - run_duration)
 
+    def execute(self):
+        ''' Execute the supervisor and catch exceptions '''
+        try:
+            self.supervisor.execute()
+        except Exception as e:
+            logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
+
     def _print_screen(self, run_duration):
         ''' print a gui like screen to display whats happening here '''
         os.system('clear')
-        self.__set_stuff()
         self.__draw_top_edge()
         self.__build_info(run_duration)
         self.__draw_lines()
