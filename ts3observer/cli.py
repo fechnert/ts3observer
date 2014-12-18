@@ -69,7 +69,6 @@ class StdCli(object):
             if time_needed >= self.supervisor.work_interval:
                 logging.warn('More time needed than configured! ({} > {})'.format(time_needed, self.supervisor.work_interval))
             else:
-                # logging.info('Sleeping {} seconds ...'.format(self.supervisor.work_interval - time_needed))
                 time.sleep(self.supervisor.work_interval - time_needed)
 
     def execute(self):
@@ -90,7 +89,8 @@ class GuiCli(object):
         self.stream = StringIO()
         logging.basicConfig(stream=self.stream,
                             level=level,
-                            format='[%(levelname)s] %(message)s')
+                            format='[%(asctime)s][%(levelname)s] %(message)s',
+                            datefmt='%H:%M:%S')
         self.supervisor = Supervisor()
         self.__set_stuff()
 
