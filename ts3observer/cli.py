@@ -52,7 +52,7 @@ class StdCli(object):
         logging.basicConfig(stream=sys.stdout,
                             level=level,
                             format='[%(asctime)s][%(levelname)s] %(message)s',
-                            datefmt='%d.%m%.%Y - %H:%M:%S')
+                            datefmt='%d.%m.%Y - %H:%M:%S')
         try: self.supervisor = Supervisor()
         except Exception as e:
             if self.args.verbose: print traceback.format_exc()
