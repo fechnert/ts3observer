@@ -115,7 +115,7 @@ class GuiCli(object):
         for i in range(self.info_size):
             self.__draw_line(
                 self.__get_elem(self.supervisor.clients.items(), -i - 1),
-                self.__get_elem(self.supervisor.queue.items(), -i - 1),
+                self.__get_elem(self._get_queue(), -i - 1),
                 self.__get_elem(self.info, i))
 
     def __draw_log(self):
@@ -153,6 +153,13 @@ class GuiCli(object):
         ''' get log stream and adds it to list '''
         map(self.log.append, self.stream.getvalue().split('\n'))
 
+    def _get_queue(self):
+        ''' Change the __repr__ of actions and returns them '''
+        queue = []
+        for name, action in self.supervisor.queue.items():
+            queue.append('{0} in {1} s'.format(': '.join(name.split('_')), action.trigger_time - time.time()))
+        return queue
+
     def __draw_top_edge(self):
         ''' Draw the top edge with headlines '''
         hl = {}
@@ -172,33 +179,3 @@ class GuiCli(object):
         ''' Draw horizontal edges '''
         print('{0}{1:{1}<{width}}{0}'.format(
             self.corner_char, self.border_hchar, width=(self.col_width * 3) + 2))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
