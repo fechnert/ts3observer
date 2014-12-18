@@ -63,7 +63,6 @@ class Supervisor(object):
         Validator.query(self.query('clientupdate client_nickname={}'.format(
             Escaper.encode(format(self.config['global']['telnet']['display_name'])))))
         logging.info('Successfully connected to server!')
-        logging.info('---')
 
     def execute(self):
         self.clients = self._clientlist()

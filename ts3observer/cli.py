@@ -146,7 +146,7 @@ class GuiCli(object):
         self.__get_log()
         for i in range(self.log_size):
             print('{0} {1:<{width}} {0}'.format(
-                self.border_vchar, self.__get_elem(self.log, -self.log_size - 1 + i), width=self.col_width * 3))
+                self.border_vchar, self.__get_elem(self.log, -self.log_size + i), width=self.col_width * 3))
 
     def __build_info(self, run_duration):
         ''' Build some kind of information '''
@@ -166,11 +166,6 @@ class GuiCli(object):
             stuff = ''
         return stuff
 
-    def __draw_line(self, col1, col2, col3):
-        ''' Draw a line '''
-        print('{0} {1:<{width}} {0} {2:<{width}} {0} {3:<{width}} {0}'.format(
-            self.border_vchar, col1, col2, col3, width=self.col_width - 2))
-
     def __get_log(self):
         ''' get log stream and adds it to list '''
         for entry in self.stream.getvalue().split('\n'):
@@ -183,6 +178,11 @@ class GuiCli(object):
         for name, action in self.supervisor.queue.items():
             queue.append('{0} in {1} s'.format(': '.join(name.split('_')), action.trigger_time - time.time()))
         return queue
+
+    def __draw_line(self, col1, col2, col3):
+        ''' Draw a line '''
+        print('{0} {1:<{width}} {0} {2:<{width}} {0} {3:<{width}} {0}'.format(
+            self.border_vchar, col1, col2, col3, width=self.col_width - 2))
 
     def __draw_top_edge(self):
         ''' Draw the top edge with headlines '''
