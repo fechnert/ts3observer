@@ -59,10 +59,11 @@ class Supervisor(object):
         Validator.query(self.query('login {user} {pass}'.format(**self.config['global']['telnet'])))
         logging.info('Choosing virtual server {} ...'.format(self.config['global']['telnet']['serv']))
         Validator.query(self.query('use {serv}'.format(**self.config['global']['telnet'])))
-        logging.info('Changing displayname to {}'.format(self.config['global']['telnet']['display_name']))
+        logging.info('Changing displayname to {} ...'.format(self.config['global']['telnet']['display_name']))
         Validator.query(self.query('clientupdate client_nickname={}'.format(
             Escaper.encode(format(self.config['global']['telnet']['display_name'])))))
-        logging.info('Successfully cunnected to server!')
+        logging.info('Successfully connected to server!')
+        logging.info('---')
 
     def execute(self):
         self.clients = self._clientlist()
