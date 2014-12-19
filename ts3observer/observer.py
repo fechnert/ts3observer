@@ -99,7 +99,8 @@ class Supervisor(object):
         ''' Work off the moveback queue '''
         for name, action in self.moveback_queue.items():
             if action.trigger_time <= time.time():
-                self.clients[action.clid].move(action.feature_name, action.to)
+                try: self.clients[action.clid].move(action.feature_name, action.to)
+                except KeyError: continue
                 if name in self.moveback_queue:
                     self.moveback_queue.pop(name, None)
 
