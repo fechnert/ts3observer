@@ -98,6 +98,10 @@ class Client(object):
             self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
             self.socket.read_until('msg=ok', 2)
             logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, self.client_nickname, self.ocid, to))
+            return True
+        else:
+            self.ocid = to
+            return False
 
     @Escaper.encode_attr('reason')
     def ban(self, featurename, time=0, reason='Kicked', **kwargs):

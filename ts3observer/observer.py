@@ -81,8 +81,8 @@ class Supervisor(object):
                 if actionname in self.queue:
                     self.queue.pop(actionname)
             if action.trigger_time <= time.time():
-                action.execute()
-                if action.additional_params['action'] == 'move':
+                done = action.execute()
+                if done and action.additional_params['action'] == 'move':
                     self._add_moveback(action.client_obj, action.featurename)
                 if actionname in self.queue:
                     self.queue.pop(actionname)
