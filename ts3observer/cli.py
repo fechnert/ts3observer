@@ -163,8 +163,8 @@ class GuiCli(object):
         ''' Get a element with index. catch exceptions ant return empty string '''
         try:
             stuff = elem[index]
-        except (IndexError, KeyError):
-            stuff = ''
+        except Exception as e:
+            stuff = str(e)
         return stuff
 
     def __get_log(self):
