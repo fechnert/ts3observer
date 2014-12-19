@@ -164,7 +164,10 @@ class GuiCli(object):
         try:
             stuff = elem[index]
         except Exception as e:
-            stuff = str(e)
+            if self.args.verbose:
+                stuff = str(e)
+            else:
+                stuff = ''
         return stuff
 
     def __get_log(self):
