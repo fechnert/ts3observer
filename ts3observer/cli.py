@@ -137,7 +137,7 @@ class GuiCli(object):
         ''' Draw main info lines '''
         for i in range(self.info_size):
             self.__draw_line(
-                self.__get_elem(self.supervisor.clients.items(), -i - 1),
+                self.__get_elem(self._get_clients(), -i - 1),
                 self.__get_elem(self._get_queue(), -i - 1),
                 self.__get_elem(self.info, i))
 
@@ -177,11 +177,19 @@ class GuiCli(object):
             if entry: self.log.append(entry)
         self.stream.truncate(0)
 
+    def _get_clients(self):
+        ''' Change the __repr__ of clients and returns them '''
+        clients = []
+        for clid, client in self.supervisor.clients.items():
+            clients.append('{:<4} | {}'.format(clid, client))
+        return clients
+
     def _get_queue(self):
         ''' Change the __repr__ of actions and returns them '''
         queue = []
         for name, action in self.supervisor.queue.items():
-            queue.append('{0} in {1} s'.format(': '.join(name.split('_')), action.trigger_time - time.time()))
+            queue.append('{0:<25} in {1:.3} s'.format(': '.join(name.split('_')).replace('<', '').replace('>', ''),
+                action.trigger_time - time.time()))
         return queue
 
     def __draw_line(self, col1, col2, col3):
