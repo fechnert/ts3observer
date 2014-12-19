@@ -188,7 +188,7 @@ class GuiCli(object):
         ''' Change the __repr__ of actions and returns them '''
         queue = []
         for name, action in self.supervisor.queue.items():
-            queue.append('{0:<25} in {1:.2f} s'.format(': '.join(name.split('_')).replace('<', '').replace('>', ''),
+            queue.append('{0:<25} in {1:>7.2f} s'.format(': '.join(name.split('_')).replace('<', '').replace('>', ''),
                 action.trigger_time - time.time()))
         return queue
 
