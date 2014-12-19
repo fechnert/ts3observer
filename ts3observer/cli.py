@@ -167,6 +167,7 @@ class GuiCli(object):
             if self.args.verbose:
                 stuff = str(e)
             else:
+                logging.warn(str(e))
                 stuff = ''
         return stuff
 
