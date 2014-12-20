@@ -71,11 +71,6 @@ class Feature(object):
         if client.client_unique_identifier == 'serveradmin':
             self.clients.pop(clid, None)
 
-    def _check_if_already(self, action):
-        ''' Check if specific action is already executed
-            primary for move action ...
-        '''
-
     def run(self):
         ''' run the logic part on every matched client '''
         for clid, client in self.clients.items():
