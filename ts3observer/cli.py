@@ -76,8 +76,10 @@ class StdCli(object):
         try:
             self.supervisor.execute()
         except Exception as e:
-            if self.args.verbose: traceback.format_exc()
-            else: logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
+            if self.args.verbose:
+                logging.critical(traceback.format_exc())
+            else:
+                logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
 
 
 class GuiCli(object):
