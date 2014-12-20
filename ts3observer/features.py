@@ -95,7 +95,12 @@ class Feature(object):
             self.config['execute']
         )
         name = '<{}_moveback_{}>'.format(self.__class__.__name__, client_obj.clid)
-        if int(client_obj.cid) == int(self.config['execute']['to']) and name in self.mb_queue:
+
+        if self.config['execute']['action'] == 'move':
+            move_to_cid = self.config['execute']['to']
+        else: move_to_cid = None
+
+        if int(client_obj.cid) == move_to_cid and name in self.mb_queue:
             self.mb_queue[name].trigger_time = time.time() + 2
         else:
             if not str(action) in self.queue:
