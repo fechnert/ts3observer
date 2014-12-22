@@ -100,7 +100,7 @@ class GuiCli(object):
         ''' Run the ts3observer '''
         while True:
             start = time.time()
-            self.clients = self.execute()
+            self.execute()
             end = time.time()
 
             run_duration = end - start
@@ -111,7 +111,7 @@ class GuiCli(object):
     def execute(self):
         ''' Execute the supervisor and catch exceptions '''
         try:
-            self.supervisor.execute()
+            self.clients = self.supervisor.execute()
         except Exception as e:
             logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
 
