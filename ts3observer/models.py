@@ -88,7 +88,7 @@ class Client(object):
         ''' Kick a client '''
         self.socket.write('clientkick reasonid={} reasonmsg={} clid={}\n'.format(reasonid, reason, self.clid))
         self.socket.read_until('msg=ok', 2)
-        logging.info('Feature \'{}\' kicked {}'.format(featurename, self.client_nickname))
+        logging.info('Feature \'{}\' kicked {}'.format(featurename, Escaper.decode(self.client_nickname)))
 
     def move(self, featurename, to, **kwargs):
         ''' Move a client :to: a channel '''
@@ -97,7 +97,7 @@ class Client(object):
             self.cid = to
             self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
             self.socket.read_until('msg=ok', 2)
-            logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, self.client_nickname, self.ocid, to))
+            logging.info('Feature \'{}\' moved {} (from cid {} to {})'.format(featurename, Escaper.decode(self.client_nickname), self.ocid, to))
             return True
         else:
             self.ocid = to
@@ -111,7 +111,7 @@ class Client(object):
         else:
             self.socket.write('banclient clid={} banreason={}\n'.format(self.clid, reason))
         self.socket.read_until('msg=ok', 2)
-        logging.info('Feature \'{}\' banned {} for {} seconds (0 = infinite)'.format(featurename, self.client_nickname, time))
+        logging.info('Feature \'{}\' banned {} for {} seconds (0 = infinite)'.format(featurename, Escaper.decode(self.client_nickname), time))
 
     def show(self, featurename, **kwargs):
         ''' Only shows the clientname (for debugging purpose) '''
