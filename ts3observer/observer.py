@@ -73,6 +73,7 @@ class Supervisor(object):
         logging.debug('Queue  : {}'.format(str(self.queue)))
         self.workoff_queue()
         self.workoff_mb_queue()
+        return self.clients
 
     def workoff_queue(self):
         ''' Work off the queue and execute outstanding actions '''

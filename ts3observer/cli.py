@@ -100,7 +100,7 @@ class GuiCli(object):
         ''' Run the ts3observer '''
         while True:
             start = time.time()
-            self.execute()
+            self.clients = self.execute()
             end = time.time()
 
             run_duration = end - start
@@ -154,7 +154,7 @@ class GuiCli(object):
     def __build_info(self, run_duration):
         ''' Build some kind of information '''
         self.info[1] = 'Time: {}'.format(time.time())
-        self.info[3] = 'Clients : {}'.format(len(self.supervisor.clients))
+        self.info[3] = 'Clients : {}'.format(len(self.clients))
         self.info[4] = 'In Queue: {}'.format(len(self.supervisor.queue))
         self.info[6] = 'Last run needed time:'
         self.info[7] = str(run_duration)
@@ -182,7 +182,7 @@ class GuiCli(object):
     def _get_clients(self):
         ''' Change the __repr__ of clients and returns them '''
         clients = []
-        for clid, client in self.supervisor.clients.items():
+        for clid, client in self.clients.items():
             clients.append('{:<4} | {}'.format(clid, client))
         return clients
 
