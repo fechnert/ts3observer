@@ -76,7 +76,7 @@ class PropertyMapper(object):
         for key in properties:
             if '=' in key:
                 x = key.split('=')
-                validated_properties.update({x[0]: x[1]})
+                validated_properties.update({x[0]: ''.join(x[1:])})
         return validated_properties
 
 
