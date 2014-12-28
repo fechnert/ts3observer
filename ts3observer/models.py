@@ -128,6 +128,24 @@ class Client(object):
         ''' Only shows the clientname (for debugging purpose) '''
         logging.info('{}: {}'.format(featurename, Escaper.decode(self.client_nickname)))
 
+    @Escaper.encode_attr('message')
+    def poke(self, featurename, message, **kwargs):
+        ''' Poke a client with given message '''
+        self.socket.write('clientpoke clid={} msg={}\n'.format(self.clid, message))
+        self.socket.read_until('msg=ok', 2)
+
+    @Escaper.encode_attr('message')
+    def chat(self, featurename, targetmode, target, message, **kwargs):
+        ''' Send a text message to specific target, depending on targetmode '''
+        self.socket.write('sendtextmessage targetmode={} target={} msg={}\n'.format(targetmode, target, message))
+        self.socket.read_until('msg=ok', 2)
+
+    @Escaper.encode_attr('message')
+    def notify(self, featurename, message, **kwargs):
+        ''' Send a message to this client '''
+        self.socket.write('sendtextmessage targetmode=1 target={} msg={}\n'.format(self.clid, message))
+        self.socket.read_until('msg=ok', 2)
+
 
 class Channel(object):
     ''' Represents the Channel '''
