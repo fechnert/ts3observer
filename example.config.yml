@@ -72,6 +72,7 @@ features:
       action: kick
       reasonid: 5
       reason: "Away for too long!"
+      s_delay: 10
 
   OnIdle:
     enable: False
@@ -79,6 +80,7 @@ features:
       action: kick
       reasonid: 5
       reason: "Idled too long!"
+      m_delay: 30
 
   OnMute:
     enable: False
@@ -86,6 +88,7 @@ features:
       action: kick
       reasonid: 5
       reason: "Muted too long!"
+      s_delay: 10
 
   OnDeaf:
     enable: False
@@ -93,3 +96,4 @@ features:
       action: kick
       reasonid: 5
       reason: "Deaf too long!"
+      s_delay: 10
