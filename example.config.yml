@@ -56,6 +56,13 @@ features:
       reasonid: 5
       reason: "Bad username"
 
+  MusicbotDetection:
+    enable: False
+    execute:
+      action: kick
+      message: "Du bist ein Musikbot"
+      m_delay: 5
+
 #####
 # Features to handle ways of idling
 

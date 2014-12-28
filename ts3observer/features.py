@@ -122,6 +122,11 @@ class UsernameBlacklist(Feature):
             if re.match(regex, client.client_nickname):
                 return client
 
+class MusicbotDetection(Feature):
+    def filter(self, clid, client):
+        if int(client.client_idle_time) < 1000:
+            return client
+
 class OnAway(Feature):
     def filter(self, clid, client):
         if int(client.client_away) == 1:
