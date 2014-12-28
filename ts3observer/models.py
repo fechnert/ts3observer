@@ -79,7 +79,12 @@ class Client(object):
         self.socket = socket
         for key, value in kwargs.items():
             setattr(self, key, value)
+        self.__alter_values()
         self.__split_servergroups()
+
+    def __alter_values(self):
+        ''' Alternate some values '''
+        self.cid = int(self.cid)
 
     def __split_servergroups(self):
         ''' Split the servergroups '''
