@@ -51,12 +51,14 @@ class Feature(object):
         self.__exclude_self(clid, client)
 
     def __apply_group_rules(self, clid, client):
-        if self.group_whitelist:
-            if not client.client_servergroups in self.group_whitelist:
-                self.clients.pop(clid, None)
-        if self.group_blacklist:
-            if client.client_servergroups in self.group_blacklist:
-                self.client.pop(clid, None)
+            if self.group_whitelist:
+                for group in self.group_whitelist:
+                    if not group in client.client_servergroups:
+                        self.clients.pop(clid, None)
+            if self.group_blacklist:
+                for group in self.group_blacklist:
+                    if group in client.client_servergroups:
+                        self.client.pop(clid, None)
 
     def __apply_channel_rules(self, clid, client):
         if self.channel_whitelist:

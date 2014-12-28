@@ -79,6 +79,12 @@ class Client(object):
         self.socket = socket
         for key, value in kwargs.items():
             setattr(self, key, value)
+        self.__split_servergroups()
+
+    def __split_servergroups(self):
+        ''' Split the servergroups '''
+        if self.client_servergroups:
+            self.client_servergroups = map(lambda g: int(g), self.client_servergroups.split(','))
 
     def __repr__(self):
         return '<{}>'.format(Escaper.decode(self.client_nickname))
