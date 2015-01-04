@@ -30,8 +30,10 @@ class Configuration(dict):
 
     def _create_local_conf(self):
         ''' Create a local config out of the example '''
-        logging.warn('local \'config.yml\' not found! But i\'ve created one for you ;)')
         shutil.copy2('example.config.yml', 'config.yml')
+        logging.warn('local \'config.yml\' not found! But i\'ve created one for you ;)')
+        logging.warn('But before we start, please configure the configuration file. Stopping here ...')
+        exit(1)
 
 
 class Supervisor(object):
