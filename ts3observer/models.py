@@ -146,6 +146,34 @@ class Client(object):
         self.socket.write('sendtextmessage targetmode=1 target={} msg={}\n'.format(self.clid, message))
         self.socket.read_until('msg=ok', 2)
 
+    def group_set(self, featurename, sgid, **kwargs):
+        ''' Sets servergroups for a client '''
+        for gid in self.client_servergroups:
+            self.socket.write('servergroupdelclient sgid={} cldbid={}\n'.format(gid, self.client_database_id))
+            self.socket.read_until('msg=ok', 2)
+        if type(sgid) == int:
+            self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
+            self.socket.read_until('msg=ok', 2)
+        if type(sgid) == list:
+            for gid in sgid:
+                self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(gid, self.client_database_id))
+                self.socket.read_until('msg=ok', 2)
+        logging.info('{} set the servergroup(s) of {} to {}'.format(featurename, Escaper.decode(self.client_nickname), sgid))
+
+    def group_add(self, featurename, sgid, **kwargs):
+        ''' Add a client to servergroup (sgid) '''
+        if not int(sgid) in self.client_servergroups:
+            self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
+            self.socket.read_until('msg=ok', 2)
+            logging.info('{} added {} to sgid({})'.format(featurename, Escaper.decode(self.client_nickname), sgid))
+
+    def group_del(self, featurename, sgid, **kwargs):
+        ''' Delete a client from servergroup (sgid) '''
+        if int(sgid) in self.client_servergroups:
+            self.socket.write('servergroupdelclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
+            self.socket.read_until('msg=ok', 2)
+            logging.info('{} removed {} from sgid({})'.format(featurename, Escaper.decode(self.client_nickname), sgid))
+
 
 class Channel(object):
     ''' Represents the Channel '''
