@@ -129,7 +129,7 @@ class GuiCli(object):
         try:
             self.clients = self.supervisor.execute()
         except Exception as e:
-            logging.critical('{}: {}'.format(str(e.__class__.__name__), str(e)))
+            logging.critical('AtExecute: {}: {}'.format(str(e.__class__.__name__), str(e)))
 
     def _print_screen(self, run_duration):
         ''' print a gui like screen to display whats happening here '''
@@ -200,7 +200,7 @@ class GuiCli(object):
     def _get_clients(self):
         ''' Change the __repr__ of clients and returns them '''
         clients = []
-        for clid, client in self.clients.items():
+        for clid, client in sorted(self.clients.items(), reverse=True):
             clients.append('{:<4} {}'.format(clid, client))
         return clients
 
