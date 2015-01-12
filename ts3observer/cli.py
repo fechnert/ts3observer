@@ -23,8 +23,13 @@ class CommandLineInterface(object):
     def _parse_arguments(self):
         ''' Parse runtime arguments '''
         parser = argparse.ArgumentParser()
+        sub_parser = parser.add_subparsers(dest='task')
+
         parser.add_argument('-v', '--verbose', action='store_true', help='Increase verbosity for debugging purpose')
-        parser.add_argument('-g', '--graphical', action='store_true', help='Displays a \'gui\' inside the console')
+
+        run_parser = sub_parser.add_parser('run', help='Run the ts3observer')
+        run_parser.add_argument('-g', '--graphical', action='store_true', help='Displays a \'gui\' inside the console')
+
         self.args = parser.parse_args()
 
     def _get_loglevel(self):
@@ -34,13 +39,23 @@ class CommandLineInterface(object):
         else:
             return logging.INFO
 
-    def run(self):
+    def _run(self):
         ''' Do some stuff '''
         if self.args.graphical:
             self.cli = GuiCli(self.args, self._get_loglevel())
         else:
             self.cli = StdCli(self.args, self._get_loglevel())
         self.cli.run()
+
+    def dispatch(self):
+        ''' Dispatch the call to other methods '''
+        try:
+            getattr(self, '_' + self.args.task)()
+        except Exception as e:
+            if self.args.verbose:
+                print traceback.format_exc()
+            else:
+                print('{}: {}'.format(e.__class__.__name__, e))
 
 
 class StdCli(object):
