@@ -92,7 +92,7 @@ class Client(object):
             self.client_servergroups = map(lambda g: int(g), self.client_servergroups.split(','))
 
     def __repr__(self):
-        return '<{}>'.format(Escaper.decode(self.client_nickname))
+        return '{}'.format(Escaper.decode(self.client_nickname))
 
     @Escaper.encode_attr('reason')
     def kick(self, featurename, reasonid, reason='ByeBye', **kwargs):

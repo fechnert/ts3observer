@@ -201,7 +201,7 @@ class GuiCli(object):
         ''' Change the __repr__ of clients and returns them '''
         clients = []
         for clid, client in self.clients.items():
-            clients.append('{:<4} | {}'.format(clid, client))
+            clients.append('{:<4} {}'.format(clid, client))
         return clients
 
     def _get_queue(self):
