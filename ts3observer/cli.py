@@ -9,6 +9,7 @@ import time
 import logging
 import argparse
 import traceback
+import yaml
 from StringIO import StringIO
 from ts3observer.observer import Supervisor
 
@@ -141,12 +142,14 @@ class GuiCli(object):
 
     def __set_stuff(self):
         ''' Set some stuff '''
+        with open('config.yml', 'r') as f:
+            c = yaml.load(f)
         self.border_vchar = '\xe2\x80\x96'
         self.border_hchar = '='
         self.corner_char = 'O'
-        self.col_width = 50
-        self.info_size = 20
-        self.log_size = 10
+        self.col_width = c['global']['gui']['col_width']
+        self.info_size = c['global']['gui']['info_size']
+        self.log_size = c['global']['gui']['log_size']
         self.log = []
         self.info = {}
 

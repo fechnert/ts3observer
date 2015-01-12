@@ -18,6 +18,10 @@ global:
     pass: query_password
     serv: 1
     display_name: "ts3observer"
+  gui:
+    col_width: 50
+    info_size: 20
+    log_size: 10
 
 ################################################################################
 # Feature specific configuration
