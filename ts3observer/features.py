@@ -13,11 +13,10 @@ from models import ClientAction
 class Feature(object):
     ''' Represents a abstract Feature '''
 
-    def __init__(self, config, base_rules, queue, mb_queue, clients, channels):
+    def __init__(self, config, base_rules, queue, clients, channels):
         ''' Initialize the Object, set rules, apply rules '''
         self.config = config
         self.queue = queue
-        self.mb_queue = mb_queue
         self.clients = copy.copy(clients)
         self.channels = channels
         self._set_rules(base_rules)
@@ -96,19 +95,10 @@ class Feature(object):
             self.__class__.__name__ if not hasattr(self, 'acronym') else self.acronym,
             self.config['execute']
         )
-        name = '<{}_moveback_{}>'.format(self.__class__.__name__, client_obj.clid)
-
-        if self.config['execute']['action'] == 'move':
-            move_to_cid = self.config['execute']['to']
-        else: move_to_cid = None
-
-        if int(client_obj.cid) == move_to_cid and name in self.mb_queue:
-            self.mb_queue[name].trigger_time = time.time() + 2
+        if not str(action) in self.queue:
+            self.queue.update({str(action): action})
         else:
-            if not str(action) in self.queue:
-                self.queue.update({str(action): action})
-            else:
-                self.queue[str(action)].last_triggered = time.time()
+            self.queue[str(action)].last_triggered = time.time()
 
 
 class Test(Feature):

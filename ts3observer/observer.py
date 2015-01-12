@@ -11,7 +11,7 @@ import telnetlib
 import features
 import time
 from utils import Escaper, PropertyMapper, Validator
-from models import Client, Channel, MoveBackAction
+from models import Client, Channel
 
 
 class Configuration(dict):
@@ -43,7 +43,6 @@ class Supervisor(object):
         ''' Initialize the Config '''
         self.config = Configuration('config.yml')
         self.queue = {}
-        self.moveback_queue = {}
         self.work_interval = self.config['global']['work_interval']
         self._connect()
         self._login()
@@ -74,7 +73,6 @@ class Supervisor(object):
         logging.debug('Clients: {}'.format(str(self.clients)))
         logging.debug('Queue  : {}'.format(str(self.queue)))
         self.workoff_queue()
-        self.workoff_mb_queue()
         return self.clients
 
     def workoff_queue(self):
@@ -85,27 +83,8 @@ class Supervisor(object):
                     self.queue.pop(actionname)
             if action.trigger_time <= time.time():
                 done = action.execute()
-                if done and action.additional_params['action'] == 'move':
-                    self._add_moveback(action.client_obj, action.featurename)
                 if actionname in self.queue:
                     self.queue.pop(actionname)
-
-    def _add_moveback(self, client_obj, feature_name):
-        ''' Add moveback action to moveback queue '''
-        try: should = self.config['features'][feature_name]['execute']['move_back']
-        except KeyError: return
-        if should:
-            action = MoveBackAction(client_obj.clid, client_obj.ocid, feature_name, time.time() + 2)
-            self.moveback_queue.update({str(action):action})
-
-    def workoff_mb_queue(self):
-        ''' Work off the moveback queue '''
-        for name, action in self.moveback_queue.items():
-            if action.trigger_time <= time.time():
-                try: self.clients[action.clid].move(action.feature_name, action.to)
-                except KeyError: continue
-                if name in self.moveback_queue:
-                    self.moveback_queue.pop(name, None)
 
     def _call_features(self, clients, channels):
         ''' Call every signed feature '''
@@ -124,7 +103,6 @@ class Supervisor(object):
                     self.config['features'][feature],
                     self.config['features']['Base']['rules'],
                     self.queue,
-                    self.moveback_queue,
                     clients,
                     channels
                     )

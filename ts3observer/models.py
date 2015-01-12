@@ -53,22 +53,6 @@ class ClientAction(object):
             clid=self.client_obj.clid
         )
 
-class MoveBackAction(object):
-    ''' This is a helper class to move back clients which have been moved '''
-
-    def __init__(self, clid, to, feature_name, trigger_time):
-        ''' initialize the object '''
-        self.clid = clid
-        self.to = to
-        self.feature_name = feature_name
-        self.trigger_time = trigger_time
-
-    def __repr__(self):
-        return '<{featurename}_moveback_{clid}>'.format(
-            featurename=self.feature_name,
-            clid=self.clid
-        )
-
 
 class Client(object):
     ''' Represents the client '''
