@@ -58,7 +58,7 @@ class Feature(object):
             if self.group_blacklist:
                 for group in self.group_blacklist:
                     if group in client.client_servergroups:
-                        self.client.pop(clid, None)
+                        self.clients.pop(clid, None)
 
     def __apply_channel_rules(self, clid, client):
         if self.channel_whitelist:
