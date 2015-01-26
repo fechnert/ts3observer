@@ -13,10 +13,10 @@ Requirements
 
 You need some additional packages to run ts3observer
 
-* [pyaml]
+* [python-yaml]
 
 ```sh
-sudo pip install pyaml
+sudo apt-get install python-yaml
 ```
 
 Usage
@@ -26,10 +26,10 @@ The observer doesn't need to be installed.
 
 But before you start, you should configure the features you want.
 
-After that, you can run the mainfile to run the server.
+After that, you can run the mainfile to run the server:
 
 ```sh
-./run.sh
+./observer.py run
 ```
 
 
