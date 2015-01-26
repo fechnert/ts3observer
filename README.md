@@ -35,4 +35,4 @@ After that, you can run the mainfile to run the server:
 
 [TeamSpeak3]:http://www.teamspeak.com/?page=teamspeak3
 [wiki]:https://github.com/HWDexperte/ts3observer/wiki
-[pyaml]:https://pypi.python.org/pypi/pyaml
+[python-yaml]:https://pypi.python.org/pypi/pyaml
