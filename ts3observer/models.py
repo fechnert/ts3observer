@@ -39,13 +39,6 @@ class ClientAction(object):
         ''' Sets the current time as last triggered '''
         self.last_triggered = time.time()
 
-    def execute(self):
-        ''' Execute this action on the client '''
-        return getattr(self.client_obj, self.additional_params['action'])(
-            self.featurename,
-            **self.additional_params
-        )
-
     def __repr__(self):
         return '<{featurename}_{actionname}_clid={clid}>'.format(
             featurename=self.featurename,
@@ -57,18 +50,22 @@ class ClientAction(object):
 class Client(object):
     ''' Represents the client '''
 
-    def __init__(self, clid, socket, **kwargs):
+    def __init__(self, clid, **kwargs):
         ''' Fill the object dynamically with client attributes got from telnet '''
         self.clid = clid
-        self.socket = socket
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        self.__set_variables(kwargs.items())
         self.__alter_values()
         self.__split_servergroups()
+
+    def __set_variables(self, variables):
+        ''' Set the additional variables '''
+        for key, value in variables:
+            setattr(self, key, value)
 
     def __alter_values(self):
         ''' Alternate some values '''
         self.cid = int(self.cid)
+        self.decoded_nickname = Escaper.decode(self.client_nickname)
 
     def __split_servergroups(self):
         ''' Split the servergroups '''
@@ -77,86 +74,6 @@ class Client(object):
 
     def __repr__(self):
         return '{}'.format(Escaper.decode(self.client_nickname))
-
-    @Escaper.encode_attr('reason')
-    def kick(self, featurename, reasonid, reason='ByeBye', **kwargs):
-        ''' Kick a client '''
-        self.socket.write('clientkick reasonid={} reasonmsg={} clid={}\n'.format(reasonid, reason, self.clid))
-        self.socket.read_until('msg=ok', 2)
-        logging.info('{} kicked {}'.format(featurename, Escaper.decode(self.client_nickname)))
-
-    def move(self, featurename, to, **kwargs):
-        ''' Move a client :to: a channel '''
-        if int(self.cid) != to:
-            self.ocid = self.cid
-            self.cid = to
-            self.socket.write('clientmove cid={} clid={}\n'.format(to, self.clid))
-            self.socket.read_until('msg=ok', 2)
-            logging.info('{} moved {} (from cid {} to {})'.format(featurename, Escaper.decode(self.client_nickname), self.ocid, to))
-            return True
-        else:
-            self.ocid = to
-            return False
-
-    @Escaper.encode_attr('reason')
-    def ban(self, featurename, time=0, reason='Kicked', **kwargs):
-        ''' Ban a client for :sfor: seconds '''
-        if time:
-            self.socket.write('banclient clid={} banreason={} time={}\n'.format(self.clid, reason, time))
-        else:
-            self.socket.write('banclient clid={} banreason={}\n'.format(self.clid, reason))
-        self.socket.read_until('msg=ok', 2)
-        logging.info('{} banned {} for {} seconds (0 = infinite)'.format(featurename, Escaper.decode(self.client_nickname), time))
-
-    def show(self, featurename, **kwargs):
-        ''' Only shows the clientname (for debugging purpose) '''
-        logging.info('{}: {}'.format(featurename, Escaper.decode(self.client_nickname)))
-
-    @Escaper.encode_attr('message')
-    def poke(self, featurename, message, **kwargs):
-        ''' Poke a client with given message '''
-        self.socket.write('clientpoke clid={} msg={}\n'.format(self.clid, message))
-        self.socket.read_until('msg=ok', 2)
-
-    @Escaper.encode_attr('message')
-    def chat(self, featurename, targetmode, target, message, **kwargs):
-        ''' Send a text message to specific target, depending on targetmode '''
-        self.socket.write('sendtextmessage targetmode={} target={} msg={}\n'.format(targetmode, target, message))
-        self.socket.read_until('msg=ok', 2)
-
-    @Escaper.encode_attr('message')
-    def notify(self, featurename, message, **kwargs):
-        ''' Send a message to this client '''
-        self.socket.write('sendtextmessage targetmode=1 target={} msg={}\n'.format(self.clid, message))
-        self.socket.read_until('msg=ok', 2)
-
-    def group_set(self, featurename, sgid, **kwargs):
-        ''' Sets servergroups for a client '''
-        for gid in self.client_servergroups:
-            self.socket.write('servergroupdelclient sgid={} cldbid={}\n'.format(gid, self.client_database_id))
-            self.socket.read_until('msg=ok', 2)
-        if type(sgid) == int:
-            self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
-            self.socket.read_until('msg=ok', 2)
-        if type(sgid) == list:
-            for gid in sgid:
-                self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(gid, self.client_database_id))
-                self.socket.read_until('msg=ok', 2)
-        logging.info('{} set the servergroup(s) of {} to {}'.format(featurename, Escaper.decode(self.client_nickname), sgid))
-
-    def group_add(self, featurename, sgid, **kwargs):
-        ''' Add a client to servergroup (sgid) '''
-        if not int(sgid) in self.client_servergroups:
-            self.socket.write('servergroupaddclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
-            self.socket.read_until('msg=ok', 2)
-            logging.info('{} added {} to sgid({})'.format(featurename, Escaper.decode(self.client_nickname), sgid))
-
-    def group_del(self, featurename, sgid, **kwargs):
-        ''' Delete a client from servergroup (sgid) '''
-        if int(sgid) in self.client_servergroups:
-            self.socket.write('servergroupdelclient sgid={} cldbid={}\n'.format(sgid, self.client_database_id))
-            self.socket.read_until('msg=ok', 2)
-            logging.info('{} removed {} from sgid({})'.format(featurename, Escaper.decode(self.client_nickname), sgid))
 
 
 class Channel(object):

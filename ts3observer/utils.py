@@ -58,33 +58,47 @@ class Escaper(object):
             return wrapper
         return attr_decoder
 
+
+class PropertyMapper(object):
+    '''  '''
+
+    @staticmethod
+    def string_to_dict(arg_str):
+        ''' Map a string to a property dict '''
+        pairs = arg_str.split(' ')
+
+        properties = {}
+        for pair in pairs:
+            if '=' in pair:
+                x = pair.split('=')
+                properties.update({x[0]: ''.join(x[1:])})
+        return properties
+
+    @staticmethod
+    def cast_types(arg_dict):
+        ''' Assign the right type to the variables '''
+        pass
+
+
+class TelnetUtils(object):
+    ''' Provide utils for telnet stuff '''
+
+    @staticmethod
+    def connected(fn):
+        def wrapper(self, *args, **kwargs):
+            if self.tn == None:
+                raise Exception('Not connected!')
+            return fn(self, *args, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def validate(result):
+        if not 'msg=ok' in result:
+            raise Exception('Query failed! ({})'.format(TelnetUtils.remove_linebreaks(result).strip()))
+        return result
+
     @staticmethod
     def remove_linebreaks(string):
         ''' Remove unnecessary linebreaks (\r or \n) '''
         return string.replace('\n', ' ').replace('\r', ' ')
 
-
-class PropertyMapper(object):
-    ''' Handle stuff like mapping .... '''
-
-    @staticmethod
-    def string_to_dict(arg_str):
-        ''' Map a string to a property dict '''
-        properties = arg_str.split(' ')
-
-        validated_properties = {}
-        for key in properties:
-            if '=' in key:
-                x = key.split('=')
-                validated_properties.update({x[0]: ''.join(x[1:])})
-        return validated_properties
-
-
-class Validator(object):
-    ''' Validate some stuff and raise exception '''
-
-    @staticmethod
-    def query(string):
-        ''' Validate the output of querys '''
-        if not 'msg=ok' in string:
-            raise Exception(Escaper.decode(string))

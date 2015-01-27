@@ -10,7 +10,8 @@ import logging
 import telnetlib
 import features
 import time
-from utils import Escaper, PropertyMapper, Validator
+import telnet
+from utils import Escaper, PropertyMapper
 from models import Client, Channel
 
 
@@ -44,60 +45,47 @@ class Supervisor(object):
         self.config = Configuration('config.yml')
         self.queue = {}
         self.work_interval = self.config['global']['work_interval']
+        self.telnet = telnet.TelnetInterface()
         self._connect()
-        self._login()
 
     def _connect(self):
-        ''' Connect to the telnet server from ts3 '''
-        logging.info('Connecting ...')
+        ''' Connect to server '''
         conf = self.config['global']['telnet']
-        self.tn = telnetlib.Telnet(conf['host'], conf['port'])
-        time.sleep(1)
-        self.tn.read_very_eager()  # clear cache
-
-    def _login(self):
-        ''' Login as serveradmin and change name '''
-        logging.info('Logging in as {} ...'.format(self.config['global']['telnet']['user']))
-        Validator.query(self.query('login {user} {pass}'.format(**self.config['global']['telnet'])))
-        logging.info('Choosing virtual server {} ...'.format(self.config['global']['telnet']['serv']))
-        Validator.query(self.query('use {serv}'.format(**self.config['global']['telnet'])))
-        logging.info('Changing displayname to {} ...'.format(self.config['global']['telnet']['display_name']))
-        Validator.query(self.query('clientupdate client_nickname={}'.format(
-            Escaper.encode(format(self.config['global']['telnet']['display_name'])))))
-        logging.info('Successfully connected to server!')
+        self.telnet.connect(conf['host'], conf['port'])
+        self.telnet.login(conf['user'], conf['pass'])
+        self.telnet.choose_vserv(conf['serv'])
+        self.telnet.change_displayname(conf['display_name'])
+        logging.info('Successfully connected!')
 
     def execute(self):
         self.clients = self._clientlist()
         channels = None
+
         self._call_features(self.clients, channels)
-        logging.debug('Clients: {}'.format(str(self.clients)))
-        logging.debug('Queue  : {}'.format(str(self.queue)))
-        self.workoff_queue()
+        self._workoff_queue()
+
         return self.clients
 
-    def workoff_queue(self):
-        ''' Work off the queue and execute outstanding actions '''
-        for actionname, action in self.queue.items():
-            if action.last_triggered <= (time.time() - self.config['global']['work_interval']):
-                if actionname in self.queue:
-                    self.queue.pop(actionname)
-            if action.trigger_time <= time.time():
-                done = action.execute()
-                if actionname in self.queue:
-                    self.queue.pop(actionname)
+    def _clientlist(self):
+        ''' Build a list of clients '''
+        clients = {}
+        for client_info in self.telnet.get_clientlist():
+            clid = client_info['clid']
+            clients.update({clid: self.telnet.get_client(clid)})
+        return clients
 
     def _call_features(self, clients, channels):
         ''' Call every signed feature '''
-        for feature in self._import_features(clients, channels).values():
+        for feature in self.__import_features(clients, channels).values():
             try:
                 feature.run()
             except NotImplementedError:
                 logging.warn('Can\'t run Feature \'{}\''.format(feature.__class__.__name__))
 
-    def _import_features(self, clients, channels):
+    def __import_features(self, clients, channels):
         ''' Import only the needed features '''
         feature_objects = {}
-        for feature in self._get_enabled_features():
+        for feature in self.__get_enabled_features():
             feature_objects.update({
                 feature: getattr(features, feature)(
                     self.config['features'][feature],
@@ -109,7 +97,7 @@ class Supervisor(object):
             })
         return feature_objects
 
-    def _get_enabled_features(self):
+    def __get_enabled_features(self):
         ''' Get all features which are enabled in config '''
         features = []
         for feature in self.config['features']:
@@ -118,24 +106,21 @@ class Supervisor(object):
                     features.append(feature)
         return features
 
-    def _clientlist(self):
-        ''' collect all connected clients '''
-        raw_clients = self.query('clientlist').split('|')
-        clients = {}
-        for raw_client in raw_clients:
-            clients.update(self.__build_client(raw_client))
-        return clients
+    def _workoff_queue(self):
+        ''' Work off the queue and execute outstanding actions '''
+        for actionname, action in self.queue.items():
+            if action.last_triggered <= (time.time() - self.config['global']['work_interval']):
+                if actionname in self.queue:
+                    self.queue.pop(actionname)
+            if action.trigger_time <= time.time():
+                self.__execute_action(action)
+                if actionname in self.queue:
+                    self.queue.pop(actionname)
 
-    def __build_client(self, raw_client):
-        ''' build a client from "clientlist" command '''
-        clid = int(PropertyMapper.string_to_dict(raw_client)['clid'])
-        raw_client_data = self.query('clientinfo clid={}'.format(clid))
-        client_data = PropertyMapper.string_to_dict(raw_client_data)
-        client = Client(clid, self.tn, **client_data)
-        return {clid: client}
-
-    def query(self, command):
-        ''' Executes the telnet server queries '''
-        self.tn.write('{}\n'.format(command))
-        result = self.tn.read_until('msg=ok', 2)
-        return Escaper.remove_linebreaks(result)
+    def __execute_action(self, action):
+        ''' Call the action of an clientaction '''
+        getattr(self.telnet, 'clientaction_{}'.format(action.additional_params['action']))(
+            action.client_obj,
+            action.featurename,
+            **action.additional_params
+        )
