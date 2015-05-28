@@ -1,5 +1,8 @@
 # Python
 *.pyc
 
+# Project
+/conf/ts3observer.yml
+
 # IDE stuff
 /.sublimetext3/ts3observer.sublime-workspace
