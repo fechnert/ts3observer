@@ -1,5 +1,5 @@
-# Outdated!
+# Begin a new age
 
-Aloha, this version of ts3observer is outdated and was never recommended for real usage!
+Aloha,
 
-Please look at the '[refactoring](https://github.com/HWDexperte/ts3observer/tree/refactoring)' branch. There will be the new (3rd) version of the ts3observer.
+on this branch you will find the new ts3observer (v3).

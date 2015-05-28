@@ -1,12 +1,5 @@
-# Eclipse stuff
-.project
-.pydevproject
-
-# SublimeText2 stuff
-ts3observer.sublime-workspace
-
-# Python stuff
+# Python
 *.pyc
 
-# The local config
-config.yml
+# IDE stuff
+/.sublimetext3/ts3observer.sublime-workspace
