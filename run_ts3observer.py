@@ -4,8 +4,8 @@ import os, argparse, logging
 from ts3observer import Configuration
 from ts3observer.cli import CommandLineInterface as Cli
 from ts3observer.gui import GraphicalUserInterface as Gui
-from ts3observer.utils import path, print_traceback
-from ts3observer.exc import CriticalException
+from ts3observer.utils import path
+from ts3observer.exc import CriticalException, print_traceback, print_buginfo
 
 
 class Dispatcher(object):
@@ -58,6 +58,7 @@ def _run():
     except Exception as e:
         print_traceback()
         logging.critical('{}: {}'.format(e.__class__.__name__, str(e)))
+        print_buginfo()
 
 if __name__ == '__main__':
     _run()

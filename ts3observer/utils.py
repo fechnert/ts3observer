@@ -1,8 +1,6 @@
 ''' Define some utils for all needs '''
 
-import sys
 import logging
-import traceback
 from ts3observer import Configuration
 from ts3observer.exc import NoConfigFileException
 
@@ -19,12 +17,6 @@ def get_and_set_global_config():
         ts3o.config = Configuration(path('/conf/ts3observer.yml'))
     except IOError:
         raise NoConfigFileException()
-
-def print_traceback():
-    exc_type, exc_value, exc_traceback = sys.exc_info()
-    tb = traceback.format_exception(exc_type, exc_value, exc_traceback)
-    for line in tb[:-1]:
-        print line.rstrip('\r\n')
 
 def get_loglevel():
     if ts3o.args.verbose:

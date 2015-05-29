@@ -1,6 +1,8 @@
 ''' This module contains all exceptions the ts3observer will use '''
 
+import sys
 import logging
+import traceback
 
 
 class Ts3observerBaseException(Exception):
@@ -60,6 +62,14 @@ def except_skippable(function, *args, **kwargs):
 def except_breaking(function, *args, **kwargs):
     _catch_exception(BreakingException, function, *args, **kwargs)
 
+def print_traceback():
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    tb = traceback.format_exception(exc_type, exc_value, exc_traceback)
+    for line in tb[:-1]:
+        print line.rstrip('\r\n')
+
+def print_buginfo():
+    print 'You found a Bug? Report it! (https://github.com/HWDexperte/ts3observer/issues/new)'
 
 #####
 # Some global Exceptions
