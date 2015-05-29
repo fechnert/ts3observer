@@ -76,7 +76,7 @@ class TelnetUtils(object):
     @staticmethod
     def string_to_dict(arg_str):
         ''' Map a string to a property dict '''
-        pairs = arg_str.split(' ')
+        pairs = arg_str.replace('error id', 'error_id', 1).split(' ')
 
         properties = {}
         for pair in pairs:
@@ -103,7 +103,7 @@ class TelnetUtils(object):
     def validate_query(result):
         if not 'msg=ok' in result:
             response = TelnetUtils.string_to_dict(result)
-            error_id = response['id']
+            error_id = response['error_id']
             error_msg = Escaper.decode(response['msg'])
             raise QueryFailedException(msg='ErrorID: {}, ErrorMsg: \'{}\''.format(error_id, error_msg))
         return result

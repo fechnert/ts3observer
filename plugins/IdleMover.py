@@ -1,4 +1,4 @@
-from ts3observer.models import Plugin
+from ts3observer.models import Plugin, Action
 
 
 class Meta:

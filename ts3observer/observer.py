@@ -22,9 +22,10 @@ class Supervisor(object):
         self._connect()
 
     def _setup(self):
-        self._clients = None
-        self._channels = None
-        self._server_info = None
+        self._force_client_update = True
+        self._force_channel_update = True
+        self._force_server_info_update = True
+        ts3o._action_queue = list()
 
     def _connect(self):
         logging.info('Establish telnet connection')
@@ -40,6 +41,7 @@ class Supervisor(object):
         ts3o.run_id += 1
         self._update()
         self._run_plugins()
+        self._check_action_queue()
 
     def _load_plugins(self):
         logging.info('Loading plugins')
@@ -67,43 +69,65 @@ class Supervisor(object):
         for plugin_name, plugin_instance in ts3o.loaded_plugins.items():
             plugin_instance.run(self._clients, self._channels, self._server_info)
 
+    def _check_action_queue(self):
+        for action in ts3o._action_queue:
+            if action.updated:
+                if action.execute_run_id == ts3o.run_id:
+                    action.execute()
+                    self._force_update(action.object_instance_name)
+                    ts3o._action_queue.remove(action)
+                else:
+                    action.updated = False
+            else:
+                logging.info('{} removed'.format(action))
+                ts3o._action_queue.remove(action)
+
+    def _force_update(self, type_string):
+        ''' Force an update of specific information '''
+        setattr(self, '_force_{}_update'.format(type_string.lower()), True)
+
     def _update(self):
         if ts3o.run_id == 1:
-            logging.info('Fetching server information')
+            logging.info('Fetching complete server information ...')
         if self._client_update_necessary():
             self._update_clients()
         if self._channel_update_necessary():
             self._update_channels()
         if self._server_info_update_necessary():
             self._update_server_info()
+        if ts3o.run_id == 1:
+            logging.info('Finished. Now Running.')
 
     def _update_clients(self):
         logging.debug('Updating clients ...')
         self._clients = self._tn.get_connected_clients()
+        self._force_client_update = False
         self._last_client_update = ts3o.run_id
 
     def _update_channels(self):
         logging.debug('Updating channels ...')
         self._channels = self._tn.get_existing_channels()
+        self._force_channel_update = False
         self._last_channel_update = ts3o.run_id
 
     def _update_server_info(self):
         logging.debug('Updating server info ...')
         self._server_info = self._tn.get_serverinfo()
+        self._force_server_info_update = False
         self._last_server_info_update = ts3o.run_id
 
     def _client_update_necessary(self):
-        if self._clients == None: return True
+        if self._force_client_update: return True
         if self._last_client_update + ts3o.config['update_interval']['client_list'] <= ts3o.run_id: return True
         return False
 
     def _channel_update_necessary(self):
-        if self._channels == None: return True
+        if self._force_channel_update: return True
         if self._last_channel_update + ts3o.config['update_interval']['channel_list'] <= ts3o.run_id: return True
         return False
 
     def _server_info_update_necessary(self):
-        if self._server_info == None: return True
+        if self._force_server_info_update: return True
         if self._last_server_info_update + ts3o.config['update_interval']['server_info'] <= ts3o.run_id: return True
         return False
 
