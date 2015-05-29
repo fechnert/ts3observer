@@ -5,7 +5,7 @@ from ts3observer import Configuration
 from ts3observer.cli import CommandLineInterface as Cli
 from ts3observer.gui import GraphicalUserInterface as Gui
 from ts3observer.utils import path
-from ts3observer.exc import CriticalException, print_traceback, print_buginfo
+from ts3observer.exc import CriticalException, ShutDownException, print_traceback, print_buginfo
 
 
 class Dispatcher(object):
@@ -50,6 +50,9 @@ def _run():
     try:
         _setup()
         Dispatcher().dispatch()
+
+    except ShutDownException as e:
+        logging.info('Good Bye!')
 
     except CriticalException as e:
         if ts3o.args.verbose: print_traceback()

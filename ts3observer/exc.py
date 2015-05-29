@@ -71,8 +71,19 @@ def print_traceback():
 def print_buginfo():
     print 'You found a Bug? Report it! (https://github.com/HWDexperte/ts3observer/issues/new)'
 
+
 #####
-# Some global Exceptions
+# Some global exceptions
 
 class NoConfigFileException(CriticalException):
     msg = 'There is no \'/conf/ts3observer.conf\' file. Please copy the example and modify it!'
+
+class ShutDownException(CriticalException):
+    msg = 'Shutting down ...'
+
+
+#####
+# Telnet exceptions
+
+class QueryFailedException(CriticalException):
+    msg = 'The Query \'{}\' failed! {}'

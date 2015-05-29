@@ -1,0 +1,41 @@
+################################################################################
+#
+#  Aloha,
+#  This is the global configuration file for the ts3observer itself. Please read
+#  the documentation about the configuration of this tool to ensure that you
+#  understand what's happening:
+#
+#  link/to/some/online/documentation/
+#
+################################################################################
+
+# This part should be very self-explaining. You MUST modify every of this 4
+# settings to your needs. With 'serv', you can specify a server instance (if you
+# have multiple server instance running. Else if should be 1)
+host: 'localhost'
+port: 10011
+user: 'QueryAdmin_username'
+pass: 'QueryAdmin_password'
+serv: 1
+
+# The displayname defines the name the ts3observer will use after a successful
+# login. Used to identify the bot. It is not visible in the client tree
+# because it's a query user, but you will see it if you query the server with
+# 'clientlist'
+displayname: 'ts3observer'
+
+# The update_interval defines the time in cycles*, the ts3observer will
+# provide the plugins with new data about it's subject. For example, you will
+# get every cycle new information about every client if 'client_list' is set
+# to 1.
+# 'channel_list' and 'server_info' need a lot of time to query, so new data
+# will be provided less often to save time.
+update_interval:
+  client_list: 1
+  channel_list: 300
+  server_info: 900
+
+# *cycles:
+# The ts3observer works with cycles. Mostly, one cycle takes one second. But if
+# you have a lot of clients, or the ts3observer needs to update all channels,
+# i can take a lot more time. So we speak in cycles, not in seconds.

@@ -1,8 +1,9 @@
 ''' Define some utils for all needs '''
 
+import time
 import logging
 from ts3observer import Configuration
-from ts3observer.exc import NoConfigFileException
+from ts3observer.exc import NoConfigFileException, QueryFailedException
 
 
 def path(string):
@@ -24,3 +25,108 @@ def get_loglevel():
     if ts3o.args.quiet:
         return logging.CRITICAL
     return logging.INFO
+
+def control_cycles(start_timestamp, end_timestamp):
+    cycle_interval = 1
+    needed_time = end_timestamp - start_timestamp
+
+    if needed_time < 1:
+        time.sleep(1 - needed_time)
+
+
+class TelnetUtils(object):
+    ''' Provide som eutils for the telnet connection '''
+
+    @staticmethod
+    def string_to_dict(arg_str):
+        ''' Map a string to a property dict '''
+        pairs = arg_str.split(' ')
+
+        properties = {}
+        for pair in pairs:
+            if '=' in pair:
+                segments = pair.split('=', 1)
+                properties.update({segments[0]: segments[1]})
+            else:
+                properties.update({pair: None})
+        return properties
+
+    @staticmethod
+    def check_dev_modus(fn):
+        ''' use as decorator '''
+        def log_only(self, *args, **kwargs):
+            pass
+        def wrapper(self, *args, **kwargs):
+            if ts3o.args.dev:
+                return log_only(self, *args, **kwargs)
+            else:
+                return fn(self, *args, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def validate_query(result):
+        if not 'msg=ok' in result:
+            response = TelnetUtils.string_to_dict(result)
+            error_id = response['id']
+            error_msg = Escaper.decode(response['msg'])
+            raise QueryFailedException(msg='ErrorID: {}, ErrorMsg: \'{}\''.format(error_id, error_msg))
+        return result
+
+    @staticmethod
+    def remove_linebreaks(string):
+        ''' Remove unnecessary linebreaks (\r or \n) '''
+        return string.replace('\n', ' ').replace('\r', ' ')
+
+
+class Escaper(object):
+    ''' Take care of teamspeak's special char escaping ...
+        Official documentation found here:
+        http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf
+    '''
+
+    escapetable = {
+        r'\\': '\\',
+        r'\/': r'/',
+        r'\s': r' ',
+        r'\p': r'|'
+    }
+
+    @classmethod
+    def encode(cls, string):
+        ''' Escape a normal string '''
+        for escaped_char, normal_char in cls.escapetable.items():
+            string = string.replace(normal_char, escaped_char)
+        return string
+
+    @staticmethod
+    def encode_attr(*args):
+        ''' Escape a row of named attributes.
+            Designed to be used as decorator
+        '''
+        def attr_encoder(fn):
+            def wrapper(*func_args, **func_kwargs):
+                for arg in args:
+                    func_kwargs[arg] = Escaper.encode(func_kwargs[arg])
+                return fn(*func_args, **func_kwargs)
+            return wrapper
+        return attr_encoder
+
+    @classmethod
+    def decode(cls, string):
+        ''' Format a escaped string to normal one '''
+        for escaped_char in cls.escapetable:
+            string = string.replace(escaped_char, cls.escapetable[escaped_char])
+        return string
+
+    @staticmethod
+    def decode_attr(*args):
+        ''' Format a row of named attributes of escaped string to normal ones.
+            Designed to be used as decorator
+        '''
+        def attr_decoder(fn):
+            def wrapper(*func_args, **func_kwargs):
+                for arg in args:
+                    func_kwargs[arg] = Escaper.decode(func_kwargs[arg])
+                return fn(*func_args, **func_kwargs)
+            return wrapper
+        return attr_decoder

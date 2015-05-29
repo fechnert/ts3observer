@@ -1,10 +1,12 @@
 ''' The cli module that will interact with your bash. '''
 
 import sys
+import time
 import logging
 
 from ts3observer.observer import Supervisor
-from ts3observer.utils import path, get_and_set_global_config, get_loglevel
+from ts3observer.utils import path, get_and_set_global_config, get_loglevel, control_cycles
+from ts3observer.exc import ShutDownException
 
 
 class CommandLineInterface(object):
@@ -26,8 +28,20 @@ class CommandLineInterface(object):
     def run(self):
         ''' Run the ts3observer bot '''
         supervisor = Supervisor()
+        while True:
+            try:
+                self._cycle(supervisor)
+            except KeyboardInterrupt as e:
+                print ''
+                logging.info('Shutting down ...')
+                supervisor.shutdown()
+                raise ShutDownException()
 
+    def _cycle(self, supervisor):
+        start_timestamp = time.time()
         supervisor.run()
+        end_timestamp = time.time()
+        control_cycles(start_timestamp, end_timestamp)
 
     def version(self):
         f = open(path('/.version'), 'r')
