@@ -24,6 +24,7 @@ class CommandLineInterface(object):
             format='[%(asctime)s][%(levelname)8s] %(message)s',
             datefmt='%d.%m.%Y - %H:%M:%S'
         )
+        logging.info('Starting ts3observer')
 
     def run(self):
         ''' Run the ts3observer bot '''
@@ -33,7 +34,7 @@ class CommandLineInterface(object):
                 self._cycle(supervisor)
             except KeyboardInterrupt as e:
                 print ''
-                logging.info('Shutting down ...')
+                logging.info('Shutting down')
                 supervisor.shutdown()
                 raise ShutDownException()
 

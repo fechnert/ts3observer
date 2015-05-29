@@ -20,30 +20,30 @@ class TelnetInterface(object):
 
     def connect(self, host, port):
         ''' Connect with the teamspeak server instance '''
-        logging.info('Connecting to \'{}:{}\' ...'.format(host, port))
+        logging.info('  Connecting to \'{}:{}\''.format(host, port))
         self.tn = telnetlib.Telnet(host, port)
         time.sleep(1)  # Ugly, know ... but telnet is slow
         self.tn.read_very_eager()  # clear cache
 
     def login(self, user, password):
         ''' Log into the teamspeak server instance as given user with password '''
-        logging.info('Logging in as \'{}\' ...'.format(user))
+        logging.info('  Logging in as \'{}\''.format(user))
         self._query('login {} {}'.format(user, password))
 
     def use_server_instance(self, servid):
         ''' Use a ts3 server instance '''
-        logging.info('Choosing virtual ts3 server \'{}\' ...'.format(servid))
+        logging.info('  Choosing virtual ts3 server \'{}\''.format(servid))
         self._query('use {}'.format(servid))
 
     def change_display_name(self, name):
         ''' Change the nickname of the bot '''
-        logging.info('Changing displayname to \'{}\' ...'.format(name))
+        logging.info('  Changing displayname to \'{}\''.format(name))
         uname = Escaper.encode(name)
         self._query('clientupdate client_nickname={}'.format(uname))
 
     def disconnect(self):
         ''' Quits the connection the soft way '''
-        logging.info('Closing the connection ...')
+        logging.info('Closing the connection')
         self._query('quit')
 
 

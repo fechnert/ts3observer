@@ -21,10 +21,12 @@ class Supervisor(object):
         self._server_info = None
 
     def _connect(self):
+        logging.info('Establish telnet connection')
         self._tn.connect(ts3o.config['host'], ts3o.config['port'])
         self._tn.login(ts3o.config['user'], ts3o.config['pass'])
         self._tn.use_server_instance(ts3o.config['serv'])
         self._tn.change_display_name(ts3o.config['displayname'])
+        logging.info('Successful logged in!')
 
     def run(self):
         ''' 1)   get actual clientlist
