@@ -81,9 +81,29 @@ class NoConfigFileException(CriticalException):
 class ShutDownException(CriticalException):
     msg = 'Shutting down ...'
 
-
 #####
 # Telnet exceptions
 
 class QueryFailedException(CriticalException):
     msg = 'The Query \'{}\' failed! {}'
+
+#####
+# Plugin Exceptions
+
+class NewPluginDetected(CriticalException):
+    msg = 'Stopping here to allow you to configure the created config files of new loaded Plugins!'
+
+class NoMetaDataException(CriticalException):
+    msg = 'The Plugin \'{}\' has no Meta class!'
+
+class NoMetaAuthorException(CriticalException):
+    msg = 'The Plugin \'{}\' has no author in Meta class defined!'
+
+class NoMetaVersionException(CriticalException):
+    msg = 'The Plugin \'{}\' has no version in Meta class defined!'
+
+class NoDefaultConfigException(CriticalException):
+    msg = 'The Plugin \'{}\' has no default config!'
+
+class DefaultConfigisNotDictException(CriticalException):
+    msg = 'The Plugin \'{}\'s default_config attr is not a dictionary!'

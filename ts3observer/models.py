@@ -45,3 +45,13 @@ class Channel(object):
 
 class Action(object):
     pass
+
+
+class Plugin(object):
+    ''' Defines a basic plugin '''
+
+    def __init__(self, config):
+        self.config = config
+
+    def run(self, clients, channels, server_info):
+        raise NotImplementedError('Your plugin should contain the \'run\' method!')

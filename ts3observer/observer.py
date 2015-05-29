@@ -1,8 +1,11 @@
 ''' The main logic '''
 
 import logging
+import importlib
 
 from ts3observer import telnet
+from ts3observer.utils import get_available_plugins, plugin_is_new, create_plugin_config, get_plugin_config, check_plugin_data
+from ts3observer.exc import NewPluginDetected
 
 
 class Supervisor(object):
@@ -11,6 +14,9 @@ class Supervisor(object):
         ''' prepare everything'''
         ts3o.run_id = 0
         self._setup()
+
+        self._load_plugins()
+        self._stop_if_new_plugin_detected()
 
         self._tn = telnet.TelnetInterface()
         self._connect()
@@ -27,19 +33,43 @@ class Supervisor(object):
         self._tn.use_server_instance(ts3o.config['serv'])
         self._tn.change_display_name(ts3o.config['displayname'])
         logging.info('Successful logged in!')
+        logging.info('---')
 
     def run(self):
-        ''' 1)   get actual clientlist
-            2)   check if channellist is old:
-            2.1)    get actual channellist
-            3)   check if serverinfo is old:
-            3.1)    get actual serverinfo
-            4)   poke all plugins with data (threaded?)
-        '''
+        ''' Runs the ts3observer '''
         ts3o.run_id += 1
         self._update()
+        self._run_plugins()
+
+    def _load_plugins(self):
+        logging.info('Loading plugins')
+        ts3o.loaded_plugins = {}
+        for plugin_name in get_available_plugins():
+            m = importlib.import_module('plugins.' + plugin_name)
+            p = getattr(m, plugin_name)
+            check_plugin_data(plugin_name, m, p)
+
+            if plugin_is_new(plugin_name):
+                logging.info('  {} (v{}) [NEW]'.format(plugin_name, m.Meta.version))
+                create_plugin_config(plugin_name, p)
+                self._new_plugin = True
+            else:
+                logging.info('  {} (v{})'.format(plugin_name, m.Meta.version))
+
+            c = get_plugin_config(plugin_name)
+            ts3o.loaded_plugins[plugin_name] = p(c)
+
+    def _stop_if_new_plugin_detected(self):
+        if hasattr(self, '_new_plugin'):
+            if self._new_plugin: raise NewPluginDetected()
+
+    def _run_plugins(self):
+        for plugin_name, plugin_instance in ts3o.loaded_plugins.items():
+            plugin_instance.run(self._clients, self._channels, self._server_info)
 
     def _update(self):
+        if ts3o.run_id == 1:
+            logging.info('Fetching server information')
         if self._client_update_necessary():
             self._update_clients()
         if self._channel_update_necessary():

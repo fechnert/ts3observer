@@ -1,14 +1,50 @@
 ''' Define some utils for all needs '''
 
+import os
 import time
+import yaml
 import logging
 from ts3observer import Configuration
-from ts3observer.exc import NoConfigFileException, QueryFailedException
+from ts3observer.exc import NoConfigFileException, QueryFailedException, NoMetaDataException, NoMetaAuthorException, \
+                            NoMetaVersionException, NoDefaultConfigException, DefaultConfigisNotDictException
 
 
 def path(string):
     ''' Return a relative path to any file in this project, given by string '''
     return '{}{}'.format(ts3o.base_path, string)
+
+def get_available_plugins():
+    available_plugins = []
+    for f in os.listdir(ts3o.base_path + '/plugins'):
+        if f.endswith('.py') and f != '__init__.py':
+            available_plugins.append(os.path.splitext(f)[0])
+    return available_plugins
+
+def plugin_is_new(plugin_name):
+    return not os.path.isfile('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name))
+
+def create_plugin_config(plugin_name, plugin_object):
+    config_string = yaml.dump(plugin_object.default_config, default_flow_style=False)
+    with open('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name), 'w') as cfg:
+        cfg.write(config_string)
+
+def get_plugin_config(plugin_name):
+    with open('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name), 'r') as cfg:
+        config = yaml.load(cfg.read())
+    return config
+
+def check_plugin_data(plugin_name, plugin_module, plugin_object):
+    if not hasattr(plugin_module, 'Meta'):
+        raise NoMetaDataException(plugin_name)
+    if not hasattr(plugin_module.Meta, 'author'):
+        raise NoMetaAuthorException(plugin_name)
+    if not hasattr(plugin_module.Meta, 'version'):
+        raise NoMetaVersionException(plugin_name)
+    if not hasattr(plugin_object, 'default_config'):
+        raise NoDefaultConfigException(plugin_name)
+    if not type(plugin_object.default_config) == dict:
+        raise DefaultConfigisNotDictException(plugin_name)
+
 
 def get_and_set_global_config():
     ''' Get the global configuration and store it in the ts3o object.
