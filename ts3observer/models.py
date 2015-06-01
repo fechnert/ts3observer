@@ -1,6 +1,7 @@
 ''' Here i will define some models to use '''
 
 import logging
+from utils import Escaper
 
 
 class Client(object):
@@ -9,12 +10,22 @@ class Client(object):
         self.id = clid
         self.tn = telnet_lib
 
+    #####
+    # Actions
+
     def kick(self):
         logging.info('{} kicked {}'.format(self.executor, self.nickname))
         pass
 
-    def move(self):
-        logging.info('{} moved {} from [{}] to [{}]'.format(self.executor, self.nickname, '', ''))
+    def move(self, target_channel_id=0, target_channel_pw=None):
+        ocid = self.cid
+        self.tn._query('clientmove clid={} cid={} cpw={}'.format(self.id, target_channel_id, Escaper.encode(target_channel_pw)))
+        logging.info('{} moved {} from [{}] to [{}]'.format(
+            self.executor,
+            self.nickname,
+            ocid,
+            target_channel_id,
+        ))
         pass
 
     def ban(self):
@@ -24,6 +35,33 @@ class Client(object):
     def poke(self):
         logging.info('{} poked {} with message {}'.format(self.executor, self.nickname, ''))
         pass
+
+    def msg(self):
+        pass
+
+    #####
+    # properties
+
+    def is_away(self):
+        return int(self.away) == 1
+
+    def is_idle(self):
+        return int(self.idle_time) >= 1000
+
+    def is_deaf(self):
+        return int(self.output_muted) == 1
+
+    def is_muted(self):
+        return int(self.input_muted) == 1 or int(self.input_hardware) == 0
+
+    def is_recording(self):
+        return int(self.is_recording) == 1 or int(self.output_hardware) == 0
+
+    def is_talker(self):
+        return int(self.is_talker) == 1
+
+    def is_channel_commander(self):
+        return int(self.is_channel_commander) == 1
 
     def __repr__(self):
         dir(self)
@@ -35,6 +73,9 @@ class Channel(object):
     def __init__(self, cid, telnet_lib):
         self.id = cid
         self.tn = telnet_lib
+
+    #####
+    # Actions
 
     def edit(self):
         pass
@@ -107,6 +148,9 @@ class Action(object):
         '''
         return str(self.__repr__) == str(other.__repr__)
 
+    def __ne__(self, other):
+        return str(self.__repr__) != str(other.__repr__)
+
     def __repr__(self):
         ''' This is used to identify an action ... ugly, i know :( '''
         return '<Action P={} O={} R={} A={} oid={}>'.format(
@@ -123,6 +167,14 @@ class Plugin(object):
     def __init__(self, config):
         self.config = config
         self.name = self.__class__.__name__
+
+    def _setup(self):
+        self.brain = ts3o.plugin_data[self.name]
+        self.setup()
+
+    def setup(self):
+        ''' Could be used to implement a own __init__ '''
+        pass
 
     def run(self, clients, channels, server_info):
         raise NotImplementedError('Your plugin should contain the \'run\' method!')

@@ -46,6 +46,7 @@ class Supervisor(object):
     def _load_plugins(self):
         logging.info('Loading plugins')
         ts3o.loaded_plugins = {}
+        ts3o.plugin_data = {}
         for plugin_name in get_available_plugins():
             m = importlib.import_module('plugins.' + plugin_name)
             p = getattr(m, plugin_name)
@@ -60,6 +61,8 @@ class Supervisor(object):
 
             c = get_plugin_config(plugin_name)
             ts3o.loaded_plugins[plugin_name] = p(c)
+            ts3o.plugin_data[plugin_name] = {}
+            ts3o.loaded_plugins[plugin_name]._setup()
 
     def _stop_if_new_plugin_detected(self):
         if hasattr(self, '_new_plugin'):
@@ -70,7 +73,9 @@ class Supervisor(object):
             plugin_instance.run(self._clients, self._channels, self._server_info)
 
     def _check_action_queue(self):
-        for action in ts3o._action_queue:
+        # Create in the following line a copy of the list because it's a bad idea to remove
+        # items from a live list while iterating over it ...
+        for action in list(ts3o._action_queue):
             if action.updated:
                 if action.execute_run_id == ts3o.run_id:
                     action.execute()
@@ -96,7 +101,8 @@ class Supervisor(object):
         if self._server_info_update_necessary():
             self._update_server_info()
         if ts3o.run_id == 1:
-            logging.info('Finished. Now Running.')
+            logging.info('Finished.')
+            logging.info('---')
 
     def _update_clients(self):
         logging.debug('Updating clients ...')

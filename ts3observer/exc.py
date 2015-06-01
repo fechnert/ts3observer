@@ -96,8 +96,11 @@ class NewPluginDetected(CriticalException):
 class NoMetaDataException(CriticalException):
     msg = 'The Plugin \'{}\' has no Meta class!'
 
-class NoMetaAuthorException(CriticalException):
-    msg = 'The Plugin \'{}\' has no author in Meta class defined!'
+class NoMetaAuthorNameException(CriticalException):
+    msg = 'The Plugin \'{}\' has no author name in Meta class defined!'
+
+class NoMetaAuthorEmailException(CriticalException):
+    msg = 'The Plugin \'{}\' has no author email in Meta class defined!'
 
 class NoMetaVersionException(CriticalException):
     msg = 'The Plugin \'{}\' has no version in Meta class defined!'

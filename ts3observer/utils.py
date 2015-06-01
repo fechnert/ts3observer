@@ -5,8 +5,9 @@ import time
 import yaml
 import logging
 from ts3observer import Configuration
-from ts3observer.exc import NoConfigFileException, QueryFailedException, NoMetaDataException, NoMetaAuthorException, \
-                            NoMetaVersionException, NoDefaultConfigException, DefaultConfigisNotDictException
+from ts3observer.exc import NoConfigFileException, QueryFailedException, NoMetaDataException, NoMetaAuthorNameException, \
+                            NoMetaAuthorEmailException, NoMetaVersionException, NoDefaultConfigException, \
+                            DefaultConfigisNotDictException
 
 
 def path(string):
@@ -36,8 +37,10 @@ def get_plugin_config(plugin_name):
 def check_plugin_data(plugin_name, plugin_module, plugin_object):
     if not hasattr(plugin_module, 'Meta'):
         raise NoMetaDataException(plugin_name)
-    if not hasattr(plugin_module.Meta, 'author'):
-        raise NoMetaAuthorException(plugin_name)
+    if not hasattr(plugin_module.Meta, 'author_name'):
+        raise NoMetaAuthorNameException(plugin_name)
+    if not hasattr(plugin_module.Meta, 'author_email'):
+        raise NoMetaAuthorEmailException(plugin_name)
     if not hasattr(plugin_module.Meta, 'version'):
         raise NoMetaVersionException(plugin_name)
     if not hasattr(plugin_object, 'default_config'):
