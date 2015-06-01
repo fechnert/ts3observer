@@ -32,8 +32,8 @@ displayname: 'ts3observer'
 # will be provided less often to save time.
 update_interval:
   client_list: 1
-  channel_list: 300
-  server_info: 900
+  channel_list: 900
+  server_info: 1800
 
 # *cycles:
 # The ts3observer works with cycles. Mostly, one cycle takes one second. But if
