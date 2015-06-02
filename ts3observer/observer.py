@@ -84,7 +84,7 @@ class Supervisor(object):
                 else:
                     action.updated = False
             else:
-                logging.info('{} removed'.format(action))
+                logging.debug('{} removed'.format(action))
                 ts3o._action_queue.remove(action)
 
     def _force_update(self, type_string):

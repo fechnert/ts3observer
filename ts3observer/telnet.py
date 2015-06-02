@@ -57,7 +57,8 @@ class TelnetInterface(object):
         clientlist = []
         for raw_client in raw_clientlist:
             properties = TelnetUtils.string_to_dict(raw_client)
-            clientlist.append(int(properties['clid']))
+            if properties['client_nickname'] != 'ts3observer': # Temporary hack!
+                clientlist.append(int(properties['clid']))
         return clientlist
 
     def get_clientinfo(self, clid):

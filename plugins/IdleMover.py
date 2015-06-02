@@ -4,7 +4,7 @@ from ts3observer.models import Plugin, Action
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '0.2'
+    version = '1.0'
 
 
 class IdleMover(Plugin):
@@ -37,35 +37,21 @@ class IdleMover(Plugin):
     def run(self, clients, channels, server_info):
         for clid, client in clients.items():
             if not any([
-                self.check_away(client),
-                self.check_idle(client),
-                self.check_deaf(client),
-                self.check_muted(client),
+                self.check_status(client, 'check_away', 'is_away'),
+                self.check_status(client, 'check_idle', 'is_idle'),
+                self.check_status(client, 'check_deaf', 'is_deaf'),
+                self.check_status(client, 'check_muted', 'is_muted'),
             ]):
                 if self._in_afk_channel(client):
                     self.move_back(client)
 
-    def check_away(self, client):
-        if self.config['check_away']['enable']:
-            if client.is_away() and not self._in_afk_channel(client):
-                self.move(client, 'check_away')
-                self.brain['move_origins'].update({int(client.id): int(client.cid)})
-            if client.is_away():
+    def check_status(self, client, name, attr):
+        if self.config[name]['enable']:
+            if getattr(client, attr)():
+                if not self._in_afk_channel(client):
+                    self.move(client, name)
+                    self.brain['move_origins'].update({int(client.id): int(client.cid)})
                 return True
-
-    def check_idle(self, client):
-        pass
-
-    def check_deaf(self, client):
-        if self.config['check_deaf']['enable']:
-            if client.is_deaf() and not self._in_afk_channel(client):
-                self.move(client, 'check_away')
-                self.brain['move_origins'].update({int(client.id): int(client.cid)})
-            if client.is_deaf():
-                return True
-
-    def check_muted(self, client):
-        pass
 
     def move(self, client, function_name):
         Action(
