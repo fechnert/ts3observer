@@ -38,7 +38,12 @@ To view all available commands, type `python ts3observer --help`
 
 # Plugins
 
-By default there are (currently) no plugins with real content available.
+Since the ts3observer is plugin based, every tasks that manages clients,
+channels or groups should be delegated to plugins. One plugin should cover one
+topic of tasks.
+
+There are already some Plugins available.
+
 You can add plugins by copying the plugin.py in the `plugins/` folder while the
 ts3observer is not running.
 
