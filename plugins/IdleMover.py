@@ -34,7 +34,6 @@ class Config:
         }
     }
 
-
 class IdleMover(Plugin):
 
     def setup(self):

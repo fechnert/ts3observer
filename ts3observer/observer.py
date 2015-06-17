@@ -56,6 +56,7 @@ class Supervisor(object):
                 logging.info('  {} (v{}) [NEW]'.format(plugin_name, m.Meta.version))
                 create_plugin_config(plugin_name, m)
                 self._new_plugin = True
+                continue
             else:
                 logging.info('  {} (v{})'.format(plugin_name, m.Meta.version))
 

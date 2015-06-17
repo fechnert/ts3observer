@@ -39,6 +39,14 @@ class Client(object):
     def msg(self):
         pass
 
+    def add_group(self, servergroup_id):
+        self.tn._query('servergroupaddclient sgid={} cldbid={}'.format(servergroup_id, self.database_id))
+        logging.info('{} added \'{}\' to servergroup {}'.format(self.executor, self.nickname, servergroup_id))
+
+    def remove_group(self, servergroup_id):
+        self.tn._query('servergroupdelclient sgid={} cldbid={}'.format(servergroup_id, self.database_id))
+        logging.info('{} removed \'{}\' from servergroup {}'.format(self.executor, self.nickname, servergroup_id))
+
     #####
     # properties
 

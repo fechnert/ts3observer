@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os, argparse, logging
-from ts3observer import Configuration
 from ts3observer.cli import CommandLineInterface as Cli
 from ts3observer.gui import GraphicalUserInterface as Gui
 from ts3observer.utils import path

@@ -13,11 +13,20 @@ def path(string):
     ''' Return a relative path to any file in this project, given by string '''
     return '{}{}'.format(ts3o.base_path, string)
 
+def plugin_is_disabled(plugin_name):
+    if plugin_name in ts3o.config['plugins']:
+        if not ts3o.config['plugins'][plugin_name]['enable']:
+            return True
+    return False
+
 def get_available_plugins():
     available_plugins = []
     for f in os.listdir(ts3o.base_path + '/plugins'):
         if f.endswith('.py') and f != '__init__.py':
-            available_plugins.append(os.path.splitext(f)[0])
+            plugin_name = os.path.splitext(f)[0]
+            if plugin_is_disabled(plugin_name):
+                continue
+            available_plugins.append(plugin_name)
     return available_plugins
 
 def plugin_is_new(plugin_name):
