@@ -6,9 +6,7 @@ import time
 import yaml
 import logging
 from ts3observer import Configuration
-from ts3observer.exc import NoConfigFileException, QueryFailedException, NoMetaDataException, NoMetaAuthorNameException, \
-                            NoMetaAuthorEmailException, NoMetaVersionException, NoDefaultConfigException, \
-                            DefaultConfigisNotDictException, KNOWN_TN_EIDS
+from ts3observer.exc import NoConfigFileException, QueryFailedException, IncompletePlugin, KNOWN_TN_EIDS
 
 
 def path(string):
@@ -25,24 +23,24 @@ def get_available_plugins():
 def plugin_is_new(plugin_name):
     return not os.path.isfile('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name))
 
-def create_plugin_config(plugin_name, plugin_object):
-    config_string = yaml.dump(plugin_object.default_config, default_flow_style=False)
+def create_plugin_config(plugin_name, plugin_module):
+    config_string = yaml.dump(plugin_module.Config.yaml, default_flow_style=False)
     with open('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name), 'w') as cfg:
         cfg.write(config_string)
     with open('{}/conf/ts3observer.yml'.format(ts3o.base_path), 'r') as ocfg:
         content = ocfg.read()
-    content = get_modified_config(content, plugin_name)
+    content = get_modified_config(content, plugin_name, plugin_module)
     with open('{}/conf/ts3observer.yml'.format(ts3o.base_path), 'w') as ncfg:
         ncfg.write(content)
 
-def get_modified_config(content, plugin_name):
+def get_modified_config(content, plugin_name, plugin_module):
     key = '# !-NOCOMMENTS-!'
     mark = re.split(key, content)
     top = mark[0]+key+'\n\n'
     bottom = mark[1]
 
     plugin_cfg = yaml.load(bottom)
-    plugin_cfg['plugins'].update({plugin_name: {'enable':True, 'interval':1}})
+    plugin_cfg['plugins'].update({plugin_name: {'enable':plugin_module.Config.enable, 'interval':plugin_module.Config.interval}})
 
     bottom = yaml.dump(plugin_cfg, default_flow_style=False)
     return top+bottom
@@ -53,18 +51,27 @@ def get_plugin_config(plugin_name):
     return config
 
 def check_plugin_data(plugin_name, plugin_module, plugin_object):
-    if not hasattr(plugin_module, 'Meta'):
-        raise NoMetaDataException(plugin_name)
-    if not hasattr(plugin_module.Meta, 'author_name'):
-        raise NoMetaAuthorNameException(plugin_name)
-    if not hasattr(plugin_module.Meta, 'author_email'):
-        raise NoMetaAuthorEmailException(plugin_name)
-    if not hasattr(plugin_module.Meta, 'version'):
-        raise NoMetaVersionException(plugin_name)
-    if not hasattr(plugin_object, 'default_config'):
-        raise NoDefaultConfigException(plugin_name)
-    if not type(plugin_object.default_config) == dict:
-        raise DefaultConfigisNotDictException(plugin_name)
+    data = {
+        'Meta': {
+            'author_name': str,
+            'author_email': str,
+            'version': str
+        },
+        'Config': {
+            'enable': bool,
+            'interval': int,
+            'yaml': dict,
+        }
+    }
+
+    for cls, attrs in data.items():
+        if not hasattr(plugin_module, cls):
+            raise IncompletePlugin(plugin_name, '{}class'.format(cls))
+        for attr, inst in attrs.items():
+            if not hasattr(getattr(plugin_module, cls), attr):
+                raise IncompletePlugin(plugin_name, '{}class \'{}\''.format(cls, attr))
+            if not isinstance(getattr(getattr(plugin_module, cls), attr), inst):
+                raise IncompletePlugin(plugin_name, '{}class \'{}\' is not an \'{}\' instance'.format(cls, attr, inst))
 
 
 def get_and_set_global_config():

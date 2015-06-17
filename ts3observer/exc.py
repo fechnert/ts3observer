@@ -23,7 +23,7 @@ class Ts3observerBaseException(Exception):
             self.msg = self.get_msg(*args, **kwargs)
         super(Ts3observerBaseException, self).__init__(self.msg)
 
-    def get_msg(self, *args):
+    def get_msg(self, *args, **kwargs):
         return self.msg.format(*args)
 
 
@@ -106,20 +106,6 @@ KNOWN_TN_EIDS = {512:ClientNotFoundException}
 class NewPluginDetected(CriticalException):
     msg = 'Stopping here to allow you to configure the created config files of new loaded Plugins!'
 
-class NoMetaDataException(CriticalException):
-    msg = 'The Plugin \'{}\' has no Meta class!'
-
-class NoMetaAuthorNameException(CriticalException):
-    msg = 'The Plugin \'{}\' has no author name in Meta class defined!'
-
-class NoMetaAuthorEmailException(CriticalException):
-    msg = 'The Plugin \'{}\' has no author email in Meta class defined!'
-
-class NoMetaVersionException(CriticalException):
-    msg = 'The Plugin \'{}\' has no version in Meta class defined!'
-
-class NoDefaultConfigException(CriticalException):
-    msg = 'The Plugin \'{}\' has no default config!'
-
-class DefaultConfigisNotDictException(CriticalException):
-    msg = 'The Plugin \'{}\'s default_config attr is not a dictionary!'
+class IncompletePlugin(CriticalException):
+    def get_msg(self, *args, **kwargs):
+        return 'The Plugin \'{}\' has missing attributes! ({})'.format(*args)

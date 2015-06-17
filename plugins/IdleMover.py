@@ -4,12 +4,12 @@ from ts3observer.models import Plugin, Action
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.1'
+    version = '1.2'
 
-
-class IdleMover(Plugin):
-
-    default_config = {
+class Config:
+    enable = True
+    interval = 1
+    yaml = {
         'general': {
             'afk_channel_id': 0,
             'lobby_channel_id': 0,
@@ -33,6 +33,9 @@ class IdleMover(Plugin):
             }
         }
     }
+
+
+class IdleMover(Plugin):
 
     def setup(self):
         self.brain.update({'move_origins':{}})
