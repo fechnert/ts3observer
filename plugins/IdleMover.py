@@ -4,30 +4,33 @@ from ts3observer.models import Plugin, Action
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.0'
+    version = '1.1'
 
 
 class IdleMover(Plugin):
 
     default_config = {
-        'afk_channel_id': 0,
-        'afk_channel_password': '',
-        'lobby_channel_id': 0,
-        'check_away': {
-            'enable': True,
-            'move_after': 0
+        'general': {
+            'afk_channel_id': 0,
+            'lobby_channel_id': 0,
         },
-        'check_idle': {
-            'enable': True,
-            'move_after': 900
-        },
-        'check_deaf': {
-            'enable': True,
-            'move_after': 0
-        },
-        'check_muted': {
-            'enable': False,
-            'move_after': 1800
+        'listeners': {
+            'check_away': {
+                'enable': True,
+                'move_after': 0
+            },
+            'check_idle': {
+                'enable': True,
+                'move_after': 900
+            },
+            'check_deaf': {
+                'enable': True,
+                'move_after': 0
+            },
+            'check_muted': {
+                'enable': False,
+                'move_after': 1800
+            }
         }
     }
 
@@ -46,7 +49,7 @@ class IdleMover(Plugin):
                     self.move_back(client)
 
     def check_status(self, client, name, attr):
-        if self.config[name]['enable']:
+        if self.config['listeners'][name]['enable']:
             if getattr(client, attr)():
                 if not self._in_afk_channel(client):
                     self.move(client, name)
@@ -56,12 +59,11 @@ class IdleMover(Plugin):
     def move(self, client, function_name):
         Action(
             'IdleMover',
-            ts3o.run_id + self.config[function_name]['move_after'],
+            ts3o.run_id + self.config['listeners'][function_name]['move_after'],
             client,
             'move',
             function_kwargs = {
-                'target_channel_id': self.config['afk_channel_id'],
-                'target_channel_pw': self.config['afk_channel_password']
+                'target_channel_id': self.config['general']['afk_channel_id'],
             },
             reason=function_name
         ).register()
@@ -70,7 +72,7 @@ class IdleMover(Plugin):
         if int(client.id) in self.brain['move_origins']:
             origin = self.brain['move_origins'][int(client.id)]
         else:
-            origin = self.config['lobby_channel_id']
+            origin = self.config['general']['lobby_channel_id']
 
         Action(
             'IdleMover',
@@ -79,10 +81,9 @@ class IdleMover(Plugin):
             'move',
             function_kwargs = {
                 'target_channel_id': origin,
-                'target_channel_pw': self.config['afk_channel_password']
             },
             reason='move_back'
         ).register()
 
     def _in_afk_channel(self, client):
-        return int(client.cid) == self.config['afk_channel_id']
+        return int(client.cid) == self.config['general']['afk_channel_id']

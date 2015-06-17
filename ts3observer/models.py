@@ -17,7 +17,7 @@ class Client(object):
         logging.info('{} kicked {}'.format(self.executor, self.nickname))
         pass
 
-    def move(self, target_channel_id=0, target_channel_pw=None):
+    def move(self, target_channel_id=0, target_channel_pw=''):
         ocid = self.cid
         self.tn._query('clientmove clid={} cid={} cpw={}'.format(self.id, target_channel_id, Escaper.encode(target_channel_pw)))
         logging.info('{} moved {} from [{}] to [{}]'.format(
@@ -173,8 +173,12 @@ class Plugin(object):
         self.setup()
 
     def setup(self):
-        ''' Could be used to implement a own __init__ '''
+        ''' Could be used to implement a own constructor '''
         pass
 
     def run(self, clients, channels, server_info):
         raise NotImplementedError('Your plugin should contain the \'run\' method!')
+
+    def shutdown(self):
+        ''' Could be used to implement a own destructor '''
+        pass

@@ -140,4 +140,8 @@ class Supervisor(object):
         return False
 
     def shutdown(self):
+        logging.debug('Shut down Plugins:')
+        for plugin_name, plugin_instance in ts3o.loaded_plugins.items():
+            logging.debug('  '+plugin_name)
+            plugin_instance.shutdown()
         self._tn.disconnect()
