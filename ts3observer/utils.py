@@ -8,7 +8,7 @@ import logging
 from ts3observer import Configuration
 from ts3observer.exc import NoConfigFileException, QueryFailedException, NoMetaDataException, NoMetaAuthorNameException, \
                             NoMetaAuthorEmailException, NoMetaVersionException, NoDefaultConfigException, \
-                            DefaultConfigisNotDictException
+                            DefaultConfigisNotDictException, KNOWN_TN_EIDS
 
 
 def path(string):
@@ -122,12 +122,15 @@ class TelnetUtils(object):
         return wrapper
 
     @staticmethod
-    def validate_query(result):
+    def validate_result(command, result):
         if not 'msg=ok' in result:
             response = TelnetUtils.string_to_dict(result)
-            error_id = response['error_id']
+            error_id = int(response['error_id'])
             error_msg = Escaper.decode(response['msg'])
-            raise QueryFailedException(msg='ErrorID: {}, ErrorMsg: \'{}\''.format(error_id, error_msg))
+            if error_id in KNOWN_TN_EIDS:
+                raise KNOWN_TN_EIDS[error_id](command)
+            else:
+                raise QueryFailedException(msg='ErrorID: {}, ErrorMsg: \'{}\''.format(error_id, error_msg))
         return result
 
     @staticmethod

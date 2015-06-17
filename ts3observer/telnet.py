@@ -6,7 +6,7 @@ import telnetlib
 
 from ts3observer.factory import ClientFactory, ChannelFactory
 from ts3observer.utils import TelnetUtils, Escaper
-from ts3observer.exc import QueryFailedException
+from ts3observer.exc import QueryFailedException, SkippableException
 
 
 class TelnetInterface(object):
@@ -69,7 +69,11 @@ class TelnetInterface(object):
         ''' Returns all connected clients as objects '''
         connected_clients = {}
         for clid in self.get_clientlist():
-            client_dict = self.get_clientinfo(clid)
+            try:
+                client_dict = self.get_clientinfo(clid)
+            except SkippableException as e:
+                logging.warn(e.msg)
+                continue
             connected_clients.update({clid: ClientFactory.build(client_dict, clid, self)})
         return connected_clients
 
@@ -106,7 +110,7 @@ class TelnetInterface(object):
         try:
             query_result = self.tn.read_until('msg=ok', 2)
             raw_result = TelnetUtils.remove_linebreaks(query_result)
-            result = TelnetUtils.validate_query(raw_result)
+            result = TelnetUtils.validate_result(command, raw_result)
 
         except QueryFailedException as e:
             raise QueryFailedException(command, e.msg)

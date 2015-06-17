@@ -1,5 +1,6 @@
 ''' This module contains all exceptions the ts3observer will use '''
 
+import re
 import sys
 import logging
 import traceback
@@ -16,8 +17,14 @@ class Ts3observerBaseException(Exception):
             raise Ts3observerBaseException(msg='My own {} Message!'.format('Exception'))
     '''
     def __init__(self, *args, **kwargs):
-        if 'msg' in kwargs.keys(): self.msg = kwargs['msg']
-        super(Ts3observerBaseException, self).__init__(self.msg.format(*args))
+        if 'msg' in kwargs.keys():
+            self.msg = kwargs['msg']
+        else:
+            self.msg = self.get_msg(*args, **kwargs)
+        super(Ts3observerBaseException, self).__init__(self.msg)
+
+    def get_msg(self, *args):
+        return self.msg.format(*args)
 
 
 class SkippableException(Ts3observerBaseException):
@@ -73,7 +80,7 @@ def print_buginfo():
 
 
 #####
-# Some global exceptions
+# Some general exceptions
 
 class NoConfigFileException(CriticalException):
     msg = 'There is no \'/conf/ts3observer.conf\' file. Please copy the example and modify it!'
@@ -86,6 +93,12 @@ class ShutDownException(CriticalException):
 
 class QueryFailedException(CriticalException):
     msg = 'The Query \'{}\' failed! {}'
+
+class ClientNotFoundException(SkippableException):
+    def get_msg(self, *args):
+        return 'The clid \'{}\' was not found. Maybe disconnected ...'.format(re.search(r'clid=([0-9]+)', args[0]).groups()[0])
+
+KNOWN_TN_EIDS = {512:ClientNotFoundException}
 
 #####
 # Plugin Exceptions
