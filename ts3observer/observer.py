@@ -70,7 +70,9 @@ class Supervisor(object):
 
     def _run_plugins(self):
         for plugin_name, plugin_instance in ts3o.loaded_plugins.items():
-            plugin_instance.run(self._clients, self._channels, self._server_info)
+            if ts3o.config['plugins'][plugin_name]['enable']:
+                if ts3o.run_id % ts3o.config['plugins'][plugin_name]['interval'] == 0:
+                    plugin_instance.run(self._clients, self._channels, self._server_info)
 
     def _check_action_queue(self):
         # Create in the following line a copy of the list because it's a bad idea to remove

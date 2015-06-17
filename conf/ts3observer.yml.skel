@@ -37,5 +37,13 @@ update_interval:
 
 # *cycles:
 # The ts3observer works with cycles. Mostly, one cycle takes one second. But if
-# you have a lot of clients, or the ts3observer needs to update all channels,
-# i can take a lot more time. So we speak in cycles, not in seconds.
+# you have a lot of clients, or the ts3observer needs to update a lot of
+# information, it can take a lot more time. So we speak in cycles, not in
+# seconds.
+
+# Below this line ('!-NOCOMMENTS-!'), comments are disabled. If new plugins are
+# detected, this section of the config is automatically updated, comments
+# removed but your changes will remain. Do never remove this Line.
+
+# !-NOCOMMENTS-!
+plugins: {}

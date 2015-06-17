@@ -1,6 +1,7 @@
 ''' Define some utils for all needs '''
 
 import os
+import re
 import time
 import yaml
 import logging
@@ -28,6 +29,23 @@ def create_plugin_config(plugin_name, plugin_object):
     config_string = yaml.dump(plugin_object.default_config, default_flow_style=False)
     with open('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name), 'w') as cfg:
         cfg.write(config_string)
+    with open('{}/conf/ts3observer.yml'.format(ts3o.base_path), 'r') as ocfg:
+        content = ocfg.read()
+    content = get_modified_config(content, plugin_name)
+    with open('{}/conf/ts3observer.yml'.format(ts3o.base_path), 'w') as ncfg:
+        ncfg.write(content)
+
+def get_modified_config(content, plugin_name):
+    key = '# !-NOCOMMENTS-!'
+    mark = re.split(key, content)
+    top = mark[0]+key+'\n\n'
+    bottom = mark[1]
+
+    plugin_cfg = yaml.load(bottom)
+    plugin_cfg['plugins'].update({plugin_name: {'enable':True, 'interval':1}})
+
+    bottom = yaml.dump(plugin_cfg, default_flow_style=False)
+    return top+bottom
 
 def get_plugin_config(plugin_name):
     with open('{}/conf/{}.yml'.format(ts3o.base_path, plugin_name), 'r') as cfg:
@@ -94,7 +112,8 @@ class TelnetUtils(object):
     def check_dev_modus(fn):
         ''' use as decorator '''
         def log_only(self, *args, **kwargs):
-            pass
+            logging.debug(args[0])
+            return ''
         def wrapper(self, *args, **kwargs):
             if ts3o.args.dev:
                 return log_only(self, *args, **kwargs)
