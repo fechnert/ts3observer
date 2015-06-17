@@ -9,6 +9,7 @@ class Client(object):
     def __init__(self, clid, telnet_lib):
         self.id = clid
         self.tn = telnet_lib
+        self.executor = 'Core'
 
     #####
     # Actions
@@ -20,13 +21,12 @@ class Client(object):
     def move(self, target_channel_id=0, target_channel_pw=''):
         ocid = self.cid
         self.tn._query('clientmove clid={} cid={} cpw={}'.format(self.id, target_channel_id, Escaper.encode(target_channel_pw)))
-        logging.info('{} moved {} from [{}] to [{}]'.format(
+        logging.info('{} moved \'{}\' from [{}] to [{}]'.format(
             self.executor,
             self.nickname,
             ocid,
             target_channel_id,
         ))
-        pass
 
     def ban(self):
         logging.info('{} banned {} for {} seconds because of {}'.format(self.executor, self.nickname, 0, ''))

@@ -153,11 +153,19 @@ class Escaper(object):
     '''
 
     escapetable = {
-        r'\\': '\\',
-        r'\/': r'/',
-        r'\s': r' ',
-        r'\p': r'|'
+        r'\\': chr(92),  # \
+        r'\/': chr(47),  # /
+        r'\s': chr(32),  # Space
+        r'\p': chr(124), # |
+        r'\a': chr(7),   # Bell
+        r'\b': chr(8),   # Backspace
+        r'\f': chr(12),  # Form Feed
+        r'\n': chr(10),  # Newline
+        r'\r': chr(13),  # Carriage Return
+        r'\t': chr(9),   # Horizontal Tab
+        r'\v': chr(11),  # Vertical tab
     }
+
 
     @classmethod
     def encode(cls, string):
