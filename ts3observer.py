@@ -23,6 +23,14 @@ class Dispatcher(object):
         parser.add_argument('-g', '--graphical', action='store_true', help='Run the ts3observer as Gui')
         parser.add_argument('-d', '--dev', action='store_true', help='Run in developer modus')
 
+        utils_parser = sub_parser.add_parser('utils', help='Need some help?')
+        utils_sub_parser = utils_parser.add_subparsers(dest='utils')
+
+        utils_grouplist = utils_sub_parser.add_parser('servergrouplist', help='List all servergroups')
+        utils_channellist = utils_sub_parser.add_parser('channellist', help='List all channels')
+        utils_clientlist = utils_sub_parser.add_parser('clientlist', help='List all connected clients')
+        utils_clientlist.add_argument('-a', '--advanced', action='store_true', help='Get more information about the connected clients')
+
         run_parser = sub_parser.add_parser('run', help='Run the ts3observer')
         version_parser = sub_parser.add_parser('version', help='Shows the ts3observer version')
 

@@ -29,9 +29,13 @@ class Supervisor(object):
 
     def _connect(self):
         logging.info('Establish telnet connection')
+        logging.info('  Connecting to \'{}:{}\''.format(ts3o.config['host'], ts3o.config['port']))
         self._tn.connect(ts3o.config['host'], ts3o.config['port'])
+        logging.info('  Logging in as \'{}\''.format(ts3o.config['user']))
         self._tn.login(ts3o.config['user'], ts3o.config['pass'])
+        logging.info('  Choosing virtual ts3 server \'{}\''.format(ts3o.config['serv']))
         self._tn.use_server_instance(ts3o.config['serv'])
+        logging.info('  Changing displayname to \'{}\''.format(ts3o.config['displayname']))
         self._tn.change_display_name(ts3o.config['displayname'])
         logging.info('Successful logged in!')
         logging.info('---')
