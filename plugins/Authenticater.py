@@ -1,21 +1,18 @@
 from ts3observer.models import Plugin, Action
 
 import MySQLdb
+import logging
 
 
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.0'
+    version = '1.1'
 
 class Config:
     enable = False
     interval = 5
     yaml = {
-        'general': {
-            'servergroup_id': 0,
-            'remove_if_deleted': True,
-        },
         'database': {
             'hostname': 'localhost',
             'username': '',
@@ -23,6 +20,10 @@ class Config:
             'database': '',
             'table': '',
         },
+        'groups': {
+            'member': 19,
+            'vip': 32,
+        }
     }
 
 class Authenticater(Plugin):
@@ -37,45 +38,42 @@ class Authenticater(Plugin):
         self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
 
     def run(self, clients, channels, server_info):
-        auth_list = self.get_authenticated_users()
+        users = self.get_users()
 
         for clid, client in clients.items():
-            if (client.unique_identifier, True) in auth_list:
-                if not self.already_has_group(client):
-                    self.add_group(client)
-            else:
-                if self.already_has_group(client):
-                    self.remove_group(client)
+            if not client.unique_identifier in users: continue
 
-    def get_authenticated_users(self):
-        self.cursor.execute('''SELECT ts3o_uid, ts3o_active FROM {}'''.format(self.config['database']['table']))
+            for group_name, group in self.config['groups'].items():
+                if not group in client.servergroups and users[client.unique_identifier][group_name]:
+                    self.add_group(client, group)
+                elif group in client.servergroups and not users[client.unique_identifier][group_name]:
+                    self.remove_group(client, group)
+
+    def get_users(self):
+        groups = [group for group, sgid in self.config['groups'].items()]
+        tables = ', '.join(['ts3o_'+name for name in groups])
+        self.cursor.execute('''SELECT ts3o_uid, {} FROM {}'''.format(tables, self.config['database']['table']))
         self.connection.commit()
         users = self.cursor.fetchall()
-        return [(pair['ts3o_uid'], bool(pair['ts3o_active'])) for pair in users]
+        return {user['ts3o_uid']:{name:bool(user['ts3o_'+name]) for name in groups} for user in users}
 
-    def already_has_group(self, client):
-        for group in client.servergroups:
-            if group == self.config['general']['servergroup_id']:
-                return True
-        return False
+    def add_group(self, client, sgid):
+        self._register_action(client, 'add', sgid)
 
-    def add_group(self, client):
-        self._register_action(client, 'add')
-
-    def remove_group(self, client):
-        self._register_action(client, 'remove')
+    def remove_group(self, client, sgid):
+        self._register_action(client, 'remove', sgid)
 
     def shutdown(self):
         self.connection.close()
 
-    def _register_action(self, client, atype):
+    def _register_action(self, client, atype, sgid):
         Action(
             'Authenticater',
             ts3o.run_id,
             client,
             '{}_group'.format(atype),
             function_kwargs = {
-                'servergroup_id': self.config['general']['servergroup_id'],
+                'servergroup_id': sgid,
             },
             reason=atype
         ).register()
