@@ -24,7 +24,7 @@ class CommandLineInterface(object):
         logging.basicConfig(
             stream=sys.stdout,
             level=get_loglevel(),
-            format='[%(asctime)s][%(levelname)8s] %(message)s',
+            format=' %(asctime)s | %(levelname)8s | %(message)s',
             datefmt='%d.%m.%Y - %H:%M:%S'
         )
 
