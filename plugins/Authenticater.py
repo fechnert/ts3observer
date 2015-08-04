@@ -7,7 +7,7 @@ import logging
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.2'
+    version = '1.2.1'
 
 class Config:
     enable = False
@@ -19,6 +19,10 @@ class Config:
             'password': '',
             'database': '',
             'table': '',
+        },
+        'general': {
+            'remove_groups_if_not_in_database': True,
+            'default_group': 8
         },
         'groups': {
             'member': 19,
@@ -66,7 +70,12 @@ class Authenticater(Plugin):
         self._register_action(client, 'remove', sgid)
 
     def remove_all_groups(self, client):
+        if not self.config['general']['remove_groups_if_not_in_database']:
+            return
+
         for sgid in client.servergroups:
+            if sgid = self.config['general']['default_group']:
+                continue
             self.remove_group(client, sgid)
 
     def shutdown(self):
