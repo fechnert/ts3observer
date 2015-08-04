@@ -7,7 +7,7 @@ import logging
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.1'
+    version = '1.2'
 
 class Config:
     enable = False
@@ -41,7 +41,9 @@ class Authenticater(Plugin):
         users = self.get_users()
 
         for clid, client in clients.items():
-            if not client.unique_identifier in users: continue
+            if not client.unique_identifier in users:
+                self.remove_all_groups(client)
+                continue
 
             for group_name, group in self.config['groups'].items():
                 if not group in client.servergroups and users[client.unique_identifier][group_name]:
@@ -62,6 +64,10 @@ class Authenticater(Plugin):
 
     def remove_group(self, client, sgid):
         self._register_action(client, 'remove', sgid)
+
+    def remove_all_groups(self, client):
+        for sgid in client.servergroups:
+            self.remove_group(client, sgid)
 
     def shutdown(self):
         self.connection.close()
