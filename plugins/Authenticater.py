@@ -74,7 +74,7 @@ class Authenticater(Plugin):
             return
 
         for sgid in client.servergroups:
-            if sgid = self.config['general']['default_group']:
+            if sgid == self.config['general']['default_group']:
                 continue
             self.remove_group(client, sgid)
 
