@@ -8,7 +8,7 @@ from datetime import datetime
 class Meta:
     author_name = 'Tim Fechner'
     author_email = 'tim.b.f@gmx.de'
-    version = '1.3'
+    version = '1.3.1'
 
 class Config:
     enable = False
@@ -114,5 +114,5 @@ class Authenticater(Plugin):
             function_kwargs = {
                 'servergroup_id': sgid,
             },
-            reason=atype
+            reason='{}_{}'.format(atype, sgid)
         ).register()
