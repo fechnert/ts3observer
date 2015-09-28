@@ -98,7 +98,11 @@ class ClientNotFoundException(SkippableException):
     def get_msg(self, *args):
         return 'The clid \'{}\' was not found. Maybe disconnected ...'.format(re.search(r'clid=([0-9]+)', args[0]).groups()[0])
 
-KNOWN_TN_EIDS = {512:ClientNotFoundException}
+class ClientAlreadyMemberOfChannel(SkippableException):
+    def get_msg(self, *args):
+        return 'The clid \'{}\' is already a member of channel \'{}\'. This is okay i guess ...'.format()
+
+KNOWN_TN_EIDS = {512:ClientNotFoundException, 770:ClientAlreadyMemberOfChannel}
 
 #####
 # Plugin Exceptions
