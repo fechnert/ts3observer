@@ -114,18 +114,21 @@ class Supervisor(object):
     def _update_clients(self):
         logging.debug('Updating clients ...')
         self._clients = self._tn.get_connected_clients()
+        ts3o._clients = self._clients
         self._force_client_update = False
         self._last_client_update = ts3o.run_id
 
     def _update_channels(self):
         logging.debug('Updating channels ...')
         self._channels = self._tn.get_existing_channels()
+        ts3o._channels = self._channels
         self._force_channel_update = False
         self._last_channel_update = ts3o.run_id
 
     def _update_server_info(self):
         logging.debug('Updating server info ...')
         self._server_info = self._tn.get_serverinfo()
+        ts3o._server_info = self._server_info
         self._force_server_info_update = False
         self._last_server_info_update = ts3o.run_id
 

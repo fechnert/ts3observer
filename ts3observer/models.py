@@ -24,8 +24,8 @@ class Client(object):
         logging.info('{} moved \'{}\' from [{}] to [{}]'.format(
             self.executor,
             self.nickname,
-            ocid,
-            target_channel_id,
+            ts3o._channels[ocid].name,
+            ts3o._channels[target_channel_id].name,
         ))
 
     def ban(self):
@@ -95,7 +95,7 @@ class Channel(object):
         pass
 
     def __repr__(self):
-        return '<Channel cid={} name={}>'.format(self.cid, self.name)
+        return '<Channel cid={} name={}>'.format(self.id, self.name)
 
 
 class Action(object):

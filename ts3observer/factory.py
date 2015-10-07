@@ -9,6 +9,7 @@ from ts3observer.utils import Escaper
 class ClientFactory(object):
 
     transformers = {
+        'cid': int,
         'servergroups': lambda value: [int(res) for res in value.split(',')],
         'unique_identifier': Escaper.decode,
         'nickname': Escaper.decode,
@@ -29,14 +30,16 @@ class ClientFactory(object):
 
 class ChannelFactory(object):
 
-    transformers = {}
+    transformers = {
+        'name': Escaper.decode,
+    }
 
     @staticmethod
     def build(channel_dict, cid, tn):
         c = Channel(cid, tn)
         for key, value in channel_dict.items():
             if not key: continue
-            key = re.sub(r'^client_', '', key)
+            key = re.sub(r'^channel_', '', key)
 
             if key in ChannelFactory.transformers:
                 value = ChannelFactory.transformers[key](value)
