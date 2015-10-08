@@ -1,8 +1,0 @@
-Authenticater:
-  meta:
-    author_name: Tim Fechner
-    author_email: tim.b.f@gmx.de
-
-  data:
-    enable: false
-    interval: 30

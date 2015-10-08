@@ -6,7 +6,7 @@ import time
 import logging
 from prettytable import PrettyTable, NONE
 
-from ts3observer.observer import Supervisor
+from ts3observer.observer import Supervisor, PluginDisposer
 from ts3observer.telnet import TelnetInterface
 from ts3observer.utils import TelnetUtils, Escaper, path, get_and_set_global_config, get_loglevel, control_cycles
 from ts3observer.exc import ShutDownException
@@ -49,6 +49,9 @@ class CommandLineInterface(object):
 
     def utils(self):
         print getattr(CliHelper(), ts3o.args.utils)()
+
+    def plugins(self):
+        getattr(PluginDisposer(), ts3o.args.plugins)()
 
     def version(self):
         f = open(path('/.version'), 'r')

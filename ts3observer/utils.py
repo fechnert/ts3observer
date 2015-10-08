@@ -6,7 +6,7 @@ import time
 import yaml
 import logging
 from ts3observer import Configuration
-from ts3observer.exc import NoConfigFileException, QueryFailedException, IncompletePlugin, KNOWN_TN_EIDS
+from ts3observer.exc import NoConfigFileException, QueryFailedException, KNOWN_TN_EIDS
 
 
 def path(string):

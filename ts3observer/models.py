@@ -169,6 +169,7 @@ class Action(object):
             self.object_instance.id
         )
 
+
 class Plugin(object):
     ''' Defines a basic plugin '''
 
@@ -190,3 +191,12 @@ class Plugin(object):
     def shutdown(self):
         ''' Could be used to implement a own destructor '''
         pass
+
+
+class AbstractPlugin(object):
+    ''' Define an abstract plugin '''
+
+    def __init__(self, name, metadata):
+        self.name = name
+        for key, value in metadata.items():
+            setattr(self, key, value)

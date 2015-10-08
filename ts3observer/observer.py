@@ -1,11 +1,14 @@
 ''' The main logic '''
 
+import os
+import yaml
 import logging
 import importlib
 
 from ts3observer import telnet
+from ts3observer.models import AbstractPlugin
 from ts3observer.utils import get_available_plugins, plugin_is_new, create_plugin_config, get_plugin_config, check_plugin_data
-from ts3observer.exc import NewPluginDetected
+from ts3observer.exc import PluginIsBroken
 
 
 class Supervisor(object):
@@ -153,3 +156,59 @@ class Supervisor(object):
             logging.debug('  '+plugin_name)
             plugin_instance.shutdown()
         self._tn.disconnect()
+
+
+class PluginDisposer(object):
+    ''' dispose plugin management '''
+
+    def list(self):
+        plugins = self._get_available_plugins()
+        for plugin in plugins['available']:
+            print plugin.__dict__
+            print plugin.name, plugin.Authenticater.author_name, plugin.author_email
+
+    def enable(self):
+        pass
+
+    def disable(self):
+        pass
+
+    def _get_enabled_plugins(self):
+        pass
+
+    def _get_available_plugins(self):
+        plugins = {
+            'available': [],
+            'broken': [],
+        }
+
+        for d in os.listdir(ts3o.base_path + '/plugins')[::-1]:
+            try:
+                plugin = self._build_abstract_plugin(d)
+                plugins['available'].append(plugin)
+            except PluginIsBroken as e:
+                plugins['broken'].append(d)
+
+        return plugins
+
+    def _build_abstract_plugin(self, plugin_directory):
+        self._plugin_is_valid(plugin_directory)
+
+        return AbstractPlugin(
+            plugin_directory,
+            self._get_plugin_metadata(plugin_directory)
+        )
+
+    def _plugin_is_valid(self, plugin_directory):
+        if not all([
+            os.path.isfile(ts3o.base_path + '/plugins/' + plugin_directory + '/__init__.py'),
+            os.path.isfile(ts3o.base_path + '/plugins/' + plugin_directory + '/config.yml'),
+            os.path.isfile(ts3o.base_path + '/plugins/' + plugin_directory + '/meta.yml'),
+            os.path.isfile(ts3o.base_path + '/plugins/' + plugin_directory + '/' + plugin_directory + '.py'),
+        ]):
+            raise PluginIsBroken(plugin_directory)
+
+    def _get_plugin_metadata(self, plugin_name):
+        with open(ts3o.base_path + '/plugins/' + plugin_name + '/meta.yml') as f:
+            metadata = yaml.load(f)
+        return metadata

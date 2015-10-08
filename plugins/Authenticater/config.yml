@@ -1,0 +1,38 @@
+# Database information
+database:
+  host: localhost
+
+  # Credentials for the database connection
+  username: ''
+  password: ''
+  database: ''
+
+  # Where are the group columns
+  table: ''
+
+# General behaviour
+general:
+
+  # If set to true, the Authenticater will remove groups from a client if they
+  # are not specified in the database
+  remove_groups_if_not_in_database: True
+
+  # The default group specifies the groups clients will get after they first
+  # joined your server (default 8)
+  default_group: 8
+
+# Extra configuration
+extra:
+
+  # If set to true, the plugin will save information about the clients in your
+  # database table. Otherwise it will only read the group permissions and this
+  # section will be ignored
+  save_client_data: False
+  nickname_fieldname: ts3o_nickname
+  last_seen_fieldname: ts3o_last_seen
+  timestamp_format: '%Y-%m-%d %H:%M:%S
+
+# Table to group mapping
+groups:
+  member: 19
+  vip: 32

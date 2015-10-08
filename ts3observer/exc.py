@@ -110,6 +110,5 @@ KNOWN_TN_EIDS = {512:ClientNotFoundException, 770:ClientAlreadyMemberOfChannel}
 class NewPluginDetected(CriticalException):
     msg = 'Stopping here to allow you to configure the created config files of new loaded Plugins!'
 
-class IncompletePlugin(CriticalException):
-    def get_msg(self, *args, **kwargs):
-        return 'The Plugin \'{}\' has missing attributes! ({})'.format(*args)
+class PluginIsBroken(SkippableException):
+    msg = 'The Plugin \'{}\' is broken!'

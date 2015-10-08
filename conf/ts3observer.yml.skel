@@ -24,7 +24,7 @@ serv: 1
 # 'clientlist'
 displayname: 'ts3observer'
 
-# The update_interval defines the time in cycles*, the ts3observer will
+# The update_interval defines the time in cycles, the ts3observer will
 # provide the plugins with new data about it's subject. For example, you will
 # get every cycle new information about every client if 'client_list' is set
 # to 1.
@@ -34,16 +34,3 @@ update_interval:
   client_list: 1
   channel_list: 900
   server_info: 1800
-
-# *cycles:
-# The ts3observer works with cycles. Mostly, one cycle takes one second. But if
-# you have a lot of clients, or the ts3observer needs to update a lot of
-# information, it can take a lot more time. So we speak in cycles, not in
-# seconds.
-
-# Below this line ('!-NOCOMMENTS-!'), comments are disabled. If new plugins are
-# detected, this section of the config is automatically updated, comments
-# removed but your changes will remain. Do never remove this Line.
-
-# !-NOCOMMENTS-!
-plugins: {}

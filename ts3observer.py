@@ -23,6 +23,15 @@ class Dispatcher(object):
         parser.add_argument('-g', '--graphical', action='store_true', help='Run the ts3observer as Gui')
         parser.add_argument('-d', '--dev', action='store_true', help='Run in developer modus')
 
+        run_parser = sub_parser.add_parser('run', help='Run the ts3observer')
+
+        plugins_parser = sub_parser.add_parser('plugins', help='Plugin management')
+        plugins_sub_parser = plugins_parser.add_subparsers(dest='plugins')
+
+        plugins_list = plugins_sub_parser.add_parser('list', help='List all available plugins')
+        plugins_enable = plugins_sub_parser.add_parser('enable', help='Enable plugins')
+        plugins_disable = plugins_sub_parser.add_parser('disable', help='Disable plugins')
+
         utils_parser = sub_parser.add_parser('utils', help='Need some help?')
         utils_sub_parser = utils_parser.add_subparsers(dest='utils')
 
@@ -31,7 +40,6 @@ class Dispatcher(object):
         utils_clientlist = utils_sub_parser.add_parser('clientlist', help='List all connected clients')
         utils_clientlist.add_argument('-a', '--advanced', action='store_true', help='Get more information about the connected clients')
 
-        run_parser = sub_parser.add_parser('run', help='Run the ts3observer')
         version_parser = sub_parser.add_parser('version', help='Shows the ts3observer version')
 
         ts3o.args = parser.parse_args()

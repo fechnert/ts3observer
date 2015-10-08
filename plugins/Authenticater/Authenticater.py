@@ -1,47 +1,16 @@
 from ts3observer.models import Plugin, Action
 
-import MySQLdb
-import logging
 from datetime import datetime
+import MySQLdb
 
-
-class Meta:
-    author_name = 'Tim Fechner'
-    author_email = 'tim.b.f@gmx.de'
-    version = '1.3.1'
-
-class Config:
-    enable = False
-    interval = 30
-    yaml = {
-        'database': {
-            'hostname': 'localhost',
-            'username': '',
-            'password': '',
-            'database': '',
-            'table': '',
-        },
-        'general': {
-            'remove_groups_if_not_in_database': True,
-            'default_group': 8
-        },
-        'extra': {
-            'save_client_data': False,
-            'nickname_fieldname': 'ts3o_nickname',
-            'last_seen_fieldname': 'ts3o_last_seen',
-            'timestamp_format': '%Y-%m-%d %H:%M:%S'
-        },
-        'groups': {
-            'member': 19,
-            'vip': 32,
-        }
-    }
 
 class Authenticater(Plugin):
 
+    interval = 30
+
     def setup(self):
         self.connection = MySQLdb.connect(
-            host=self.config['database']['hostname'],
+            host=self.config['database']['host'],
             user=self.config['database']['username'],
             passwd=self.config['database']['password'],
             db=self.config['database']['database']
