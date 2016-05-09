@@ -162,10 +162,9 @@ class PluginDisposer(object):
     ''' dispose plugin management '''
 
     def list(self):
-        plugins = self._get_available_plugins()
+        plugins = self.get_available_plugins()
         for plugin in plugins['available']:
-            print plugin.__dict__
-            print plugin.name, plugin.Authenticater.author_name, plugin.author_email
+            print '{:<20} ({:<5})'.format(plugin.name, plugin.version)
 
     def enable(self):
         pass
@@ -173,10 +172,10 @@ class PluginDisposer(object):
     def disable(self):
         pass
 
-    def _get_enabled_plugins(self):
+    def get_enabled_plugins(self):
         pass
 
-    def _get_available_plugins(self):
+    def get_available_plugins(self):
         plugins = {
             'available': [],
             'broken': [],

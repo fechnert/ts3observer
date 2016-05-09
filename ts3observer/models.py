@@ -1,5 +1,6 @@
 ''' Here i will define some models to use '''
 
+import yaml
 import logging
 from utils import Escaper
 
@@ -200,3 +201,14 @@ class AbstractPlugin(object):
         self.name = name
         for key, value in metadata.items():
             setattr(self, key, value)
+        self._check_status()
+
+    def _check_status(self):
+        with open(ts3o.base_path + '/conf/plugins.yml', 'r') as f:
+            content = yaml.load(f)['plugins']
+        if self.name in content.keys():
+            self.enabled = content[self.name]
+        else:
+            content.update({self.name: False})
+            with open(ts3o.base_path + '/conf/plugins,yml', 'w') as f:
+                f.write(yaml.dump({'plugins': content}))
