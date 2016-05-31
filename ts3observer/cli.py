@@ -9,7 +9,7 @@ from prettytable import PrettyTable, NONE
 from ts3observer.observer import Supervisor
 from ts3observer.telnet import TelnetInterface
 from ts3observer.utils import TelnetUtils, Escaper, path, get_and_set_global_config, get_loglevel, control_cycles
-from ts3observer.exc import ShutDownException
+from ts3observer.exc import ShutDownException, SkippableException
 
 
 class CommandLineInterface(object):
@@ -35,6 +35,11 @@ class CommandLineInterface(object):
         while True:
             try:
                 self._cycle(supervisor)
+            except SkippableException as e:
+                # Temporary workaround. Will be fixed in the next major release.
+                # Prevents bug #52. Have not figured out why the hell the action gets
+                # executed before removed out of the queue...
+                continue
             except KeyboardInterrupt as e:
                 print ''
                 logging.info('Shutting down')
