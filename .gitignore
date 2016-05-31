@@ -3,6 +3,3 @@
 
 # Project
 /conf/*.yml
-
-# IDE stuff
-/.sublimetext3/ts3observer.sublime-workspace

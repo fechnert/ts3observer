@@ -48,10 +48,12 @@ class Ts3o(object):
     ''' Define a holder class '''
     pass
 
+
 def _setup():
     ''' Define some globals for ts3observer '''
     __builtins__.ts3o = Ts3o()
     ts3o.base_path = os.path.abspath(os.path.dirname(__file__))
+
 
 def _run():
     try:
@@ -62,7 +64,8 @@ def _run():
         logging.info('Good Bye!')
 
     except CriticalException as e:
-        if ts3o.args.verbose: print_traceback()
+        if ts3o.args.verbose:
+            print_traceback()
         logging.critical('{}: {}'.format(e.__class__.__name__, str(e)))
 
     except Exception as e:

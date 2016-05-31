@@ -9,10 +9,10 @@ import traceback
 class Ts3observerBaseException(Exception):
     ''' The Base Exception of all evil.
 
-        Uses unnamed arguments as objects for str.format().
+        Uses unnamed arguments as parameters for str.format().
             raise Ts3observerBaseException(some, variables)
 
-        If you want to define own messaged for a Exception, simply give it the
+        If you want to define own messages for a Exception, simply give it the
         'msg' - named parameter:
             raise Ts3observerBaseException(msg='My own {} Message!'.format('Exception'))
     '''
